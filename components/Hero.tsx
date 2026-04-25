@@ -3,6 +3,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { siteConfig } from "@/lib/data";
 
 // ─── Typewriter ────────────────────────────────────────────────────────────────
@@ -181,19 +182,19 @@ export default function Hero() {
             className="flex justify-center lg:justify-end"
           >
             <div className="relative">
-              
-              
+
+
 
               {/* Image frame */}
               <div className="w-w-[280px] h-[280px] md:w-[340px] md:h-[340px] relative rounded-full overflow-hidden border-4 border-green shadow-[0_0_40px_rgba(0,255,136,0.3)]">
                 <div className="absolute inset-0 bg-gradient-to-br from-green/8 to-transparent z-10" />
                 <div>
-                  <img
+                  <Image
                     src="/profile/profile.jpg"
                     alt="Atiq Asef"
-
+                    fill
                     className="object-cover object-top"
-
+                    priority
                   />
                 </div>
               </div>
