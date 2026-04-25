@@ -129,7 +129,7 @@ export default function Hero() {
               {...fadeUp(0.3)}
               className="font-mono text-base text-text-muted mb-6 tracking-[0.04em] h-6 flex items-center gap-0"
             >
-              <span className="text-text-faint mr-2">//</span>
+              <span className="text-text-faint mr-2">&#47;&#47;</span>
               <span>{typewriterText}</span>
               {/* blinking cursor */}
               <motion.span
