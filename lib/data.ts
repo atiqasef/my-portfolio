@@ -76,15 +76,15 @@ export const projects = [
     color: "#00ff88",
   },
   {
-    title: "SaaS Dashboard",
-    description:
-      "A project management SaaS with real-time collaboration, user auth, analytics charts, and role-based access control.",
-    stack: ["React", "Node.js", "Firebase", "Chart.js"],
-    icon: "📋",
-    live: "#",
-    github: "#",
-    color: "#3b82f6",
-  },
+  title: "Billr — AI Invoice SaaS",
+  description:
+    "AI-powered invoicing SaaS. Generate professional invoices instantly, manage clients, track payments, and export PDFs — built for freelancers.",
+  stack: ["Next.js", "TypeScript", "Prisma", "MongoDB", "Tailwind CSS"],
+  icon: "🧾",
+  live: "https://billr-woad.vercel.app",
+  github: "",
+  color: "#3b82f6",
+},
   {
     title: "Real Estate Listing App",
     description:
