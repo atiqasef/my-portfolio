@@ -13,24 +13,27 @@ const contactItems = [
   { icon: "📍", label: "LOCATION", value: siteConfig.location, href: "#" },
 ];
 
-type FormState = "idle" | "sending" | "success" | "error";
-
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const [status, setStatus] = useState<FormState>("idle");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("sending");
-    // TODO: Replace with EmailJS or your own API route
-    await new Promise((res) => setTimeout(res, 1500));
-    setStatus("success");
-    setForm({ name: "", email: "", subject: "", message: "" });
-    setTimeout(() => setStatus("idle"), 4000);
+    const subject = form.subject || `Message from ${form.name}`;
+    const body = [
+      `Name: ${form.name}`,
+      `Email: ${form.email}`,
+      "",
+      form.message,
+    ].join("\n");
+
+    window.location.href = `mailto:${siteConfig.email}?${new URLSearchParams({
+      subject,
+      body,
+    }).toString()}`;
   };
 
   return (
@@ -121,23 +124,12 @@ export default function Contact() {
 
               <motion.button
                 type="submit"
-                disabled={status === "sending" || status === "success"}
                 whileHover={{ y: -2, boxShadow: "0 8px 30px rgba(0,255,136,0.2)" }}
                 whileTap={{ scale: 0.98 }}
-                className={`w-full py-3.5 font-mono text-sm font-medium rounded tracking-[0.06em] transition-all ${
-                  status === "success"
-                    ? "bg-green-dark text-bg cursor-default"
-                    : status === "sending"
-                    ? "bg-green/60 text-bg cursor-wait"
-                    : "bg-green text-bg hover:bg-green-dark"
-                }`}
+                className="w-full py-3.5 font-mono text-sm font-medium rounded tracking-[0.06em] transition-all bg-green text-bg hover:bg-green-dark"
               >
-                {status === "sending" ? "SENDING..." : status === "success" ? "✓ MESSAGE SENT!" : "SEND MESSAGE →"}
+                SEND VIA EMAIL →
               </motion.button>
-
-              {status === "error" && (
-                <p className="text-red-400 font-mono text-xs text-center">Something went wrong. Please try again.</p>
-              )}
             </form>
           </FadeUp>
 
