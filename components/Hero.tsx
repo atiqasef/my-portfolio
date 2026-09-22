@@ -186,7 +186,7 @@ export default function Hero() {
 
 
               {/* Image frame */}
-              <div className="w-w-[280px] h-[280px] md:w-[340px] md:h-[340px] relative rounded-full overflow-hidden border-4 border-green shadow-[0_0_40px_rgba(0,255,136,0.3)]">
+              <div className="w-[280px] h-[280px] md:w-[340px] md:h-[340px] relative rounded-full overflow-hidden border-4 border-green shadow-[0_0_40px_rgba(0,255,136,0.3)]">
                 <div className="absolute inset-0 bg-gradient-to-br from-green/8 to-transparent z-10" />
                 <div>
                   <Image
