@@ -49,11 +49,9 @@ const chipVariants: Variants = {
 function SkillChip({
   name,
   icon,
-  learning = false,
 }: {
   name:      string;
   icon:      string;
-  learning?: boolean;
 }) {
   return (
     <motion.div
@@ -66,11 +64,6 @@ function SkillChip({
       }}
       className="bg-surface border border-border rounded p-5 flex flex-col items-center gap-3 cursor-default relative text-center group transition-colors"
     >
-      {learning && (
-        <span className="absolute top-2 right-2 bg-blue-500/10 border border-blue-400/25 text-blue-400 font-mono text-[0.58rem] px-1.5 py-0.5 rounded tracking-[0.05em]">
-          Learning
-        </span>
-      )}
       <span className="text-2xl leading-none">{icon}</span>
       <span className="font-mono text-xs text-text-muted group-hover:text-text transition-colors tracking-[0.04em]">
         {name}
@@ -91,8 +84,7 @@ function AnimatedGrid({ children }: { children: React.ReactNode }) {
     <motion.div
       variants={gridVariants}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-40px" }}
+      animate="visible"
       className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3"
     >
       {children}
@@ -111,29 +103,11 @@ export default function Skills() {
           title={<>Tech stack &amp;<br />tools I use.</>}
         />
 
-        {/* Current skills */}
+        {/* Skills */}
         <FadeUp>
           <AnimatedGrid>
             {skills.current.map((skill) => (
               <SkillChip key={skill.name} {...skill} />
-            ))}
-          </AnimatedGrid>
-        </FadeUp>
-
-        {/* Divider */}
-        <FadeUp delay={0.2}>
-          <div className="mt-10 mb-5 pt-4 border-t border-border">
-            <span className="font-mono text-xs text-text-faint tracking-[0.1em]">
-              CURRENTLY LEARNING
-            </span>
-          </div>
-        </FadeUp>
-
-        {/* Learning skills */}
-        <FadeUp delay={0.3}>
-          <AnimatedGrid>
-            {skills.learning.map((skill) => (
-              <SkillChip key={skill.name} {...skill} learning />
             ))}
           </AnimatedGrid>
         </FadeUp>

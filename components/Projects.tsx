@@ -1,8 +1,9 @@
 // components/Projects.tsx
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { projects } from "@/lib/data";
 import SectionHeader from "./SectionHeader";
 import FadeUp from "./FadeUp";
@@ -28,12 +29,14 @@ interface Project {
   stack: string[];
   color: string;
   icon: string;
+  image?: string;
   live: string;
   github: string;
 }
 
 function TiltCard({ project, delay }: { project: Project; delay: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const [tilt, setTilt] = useState<TiltState>({
     rotateX: 0,
@@ -65,6 +68,17 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
   const handleMouseLeave = useCallback(() => {
     setTilt({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50, isHovered: false });
   }, []);
+
+  useEffect(() => {
+    if (!isPreviewOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsPreviewOpen(false);
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isPreviewOpen]);
 
   return (
     <FadeUp delay={delay}>
@@ -117,21 +131,29 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
               className="absolute inset-0 opacity-5"
               style={{ background: `radial-gradient(circle at 30% 50%, ${project.color}, transparent 70%)` }}
             />
-            <span className="text-5xl opacity-30">{project.icon}</span>
-
-            {/*
-              Replace with actual screenshot:
-              <Image
-                src={`/projects/${project.title.toLowerCase().replace(/\s+/g, '-')}.png`}
-                alt={project.title}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-            */}
-
-            <div className="absolute bottom-3 left-3 font-mono text-[0.68rem] text-text-faint bg-bg/80 px-2.5 py-1 rounded">
-              Here I Need to add a screenshot → /public/projects/
-            </div>
+            {project.image ? (
+              <button
+                type="button"
+                onClick={() => setIsPreviewOpen(true)}
+                className="absolute inset-0 cursor-zoom-in bg-black/40"
+                aria-label={`View larger preview of ${project.title}`}
+              >
+                <Image
+                  src={project.image}
+                  alt={`${project.title} preview`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain object-center transition-transform duration-500 group-hover:scale-105"
+                />
+              </button>
+            ) : (
+              <>
+                <span className="text-5xl opacity-30">{project.icon}</span>
+                <div className="absolute bottom-3 left-3 font-mono text-[0.68rem] text-text-faint bg-bg/80 px-2.5 py-1 rounded">
+                  Here I Need to add a screenshot → /public/projects/
+                </div>
+              </>
+            )}
           </div>
 
           {/* ── Body ─────────────────────────────────────────────── */}
@@ -157,9 +179,20 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
 
             {/* Links */}
             <div className="flex gap-3 mt-auto">
-              <span className="inline-flex items-center gap-1.5 font-mono text-xs text-text-faint bg-surface border border-border px-4 py-2 rounded tracking-[0.04em] cursor-not-allowed">
-                ⏳ Coming Soon
-              </span>
+              {project.live !== "#" ? (
+                <a
+                  href={project.live}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 font-mono text-xs text-text-muted border border-border px-4 py-2 rounded hover:border-green hover:text-green transition-all tracking-[0.04em]"
+                >
+                  Open Live App
+                </a>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 font-mono text-xs text-text-faint bg-surface border border-border px-4 py-2 rounded tracking-[0.04em] cursor-not-allowed">
+                  ⏳ Coming Soon
+                </span>
+              )}
               <a
                 href={project.github}
                 target="_blank"
@@ -172,6 +205,34 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
           </div>
         </div>
       </div>
+
+      {project.image && isPreviewOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-5"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${project.title} preview`}
+          onClick={() => setIsPreviewOpen(false)}
+        >
+          <div className="relative h-[min(88vh,800px)] w-[min(94vw,1200px)]">
+            <Image
+              src={project.image}
+              alt={`${project.title} full preview`}
+              fill
+              sizes="94vw"
+              className="object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => setIsPreviewOpen(false)}
+              className="absolute right-0 top-0 rounded border border-white/30 bg-black/70 px-3 py-1.5 font-mono text-xs text-white hover:border-green hover:text-green"
+              aria-label="Close image preview"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </FadeUp>
   );
 }

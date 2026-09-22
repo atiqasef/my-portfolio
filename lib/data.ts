@@ -55,8 +55,6 @@ export const skills = {
     { name: "Tailwind CSS", icon: "💨" },
     { name: "Payments", icon: "💳" },
     { name: "Git / GitHub", icon: "🐙" },
-  ],
-  learning: [
     { name: "TypeScript", icon: "🔷" },
     { name: "PostgreSQL", icon: "🐘" },
     { name: "Docker", icon: "🐳" },
@@ -81,6 +79,7 @@ export const projects = [
     "AI-powered invoicing SaaS. Generate professional invoices instantly, manage clients, track payments, and export PDFs — built for freelancers.",
   stack: ["Next.js", "TypeScript", "Prisma", "MongoDB", "Tailwind CSS"],
   icon: "🧾",
+  image: "/projects/billr-preview.gif",
   live: "https://billr-woad.vercel.app",
   github: "",
   color: "#3b82f6",
