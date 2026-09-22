@@ -4,10 +4,10 @@ export const siteConfig = {
   company: "Atiq Asef",
   location: "Dhaka, Bangladesh",
   email: "atiqasef19@gmail.com",
-  website: "https://atiqasef.com",
+  website: "https://atiqasef.vercel.app/",
   booking: "https://cal.com/atiq-dev",
-  linkedin: "https://linkedin.com/in/YOUR_LINKEDIN", // ← Replace
-  github: "https://github.com/YOUR_GITHUB",           // ← Replace
+  linkedin: "https://www.linkedin.com/in/atiqasef",
+  github: "https://github.com/atiqasef",
   cv: "/Atiq-Asef-CV.pdf",                            // ← Add CV to /public
   tagline: "Building fast, scalable, and beautiful web applications.",
   bio: [
