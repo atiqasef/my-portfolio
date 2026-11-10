@@ -2,7 +2,11 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
-import { usePrefersReducedMotion } from "@/lib/motion";
+import {
+  duration,
+  easeOut,
+  usePrefersReducedMotion,
+} from "@/lib/motion";
 
 interface FadeUpProps {
   children: ReactNode;
@@ -25,10 +29,10 @@ export default function FadeUp({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, margin: "-40px" }}
-      transition={{ duration: 0.6, delay, ease: [0.21, 0.47, 0.32, 0.98] }}
+      viewport={{ once, margin: "-48px" }}
+      transition={{ duration: duration.slow, delay, ease: easeOut }}
       className={className}
     >
       {children}

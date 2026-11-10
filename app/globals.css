@@ -6,16 +6,20 @@
 
 :root {
   /*
-   * Cursor spotlight — updated by CursorSpotlight.tsx via
-   *   document.documentElement.style.setProperty('--cx', ...)
-   * Defaults to the viewport centre so the glow is visible before
-   * the first mousemove fires.
-   *
+   * Studio Cobalt — refined light developer portfolio.
    * Font CSS variables (--font-syne, --font-instrument, --font-dm-mono)
    * are provided by next/font/google in app/layout.tsx.
    */
-  --cx: 50vw;
-  --cy: 50vh;
+  --color-bg: #f5f7fa;
+  --color-bg2: #eef1f6;
+  --color-surface: #ffffff;
+  --color-border: #e2e7ef;
+  --color-ink: #0b1220;
+  --color-ink-muted: #5a6577;
+  --color-ink-faint: #8b95a8;
+  --color-accent: #2f5bff;
+  --color-accent-dark: #1e44d6;
+  --space-unit: 4px;
 }
 
 * {
@@ -44,8 +48,8 @@ html {
 }
 
 body {
-  background: #070707;
-  color: #f0f0f0;
+  background: var(--color-bg);
+  color: var(--color-ink);
   font-family: var(--font-instrument), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -53,85 +57,84 @@ body {
 }
 
 /* ── Scrollbar ───────────────────────────────────────────────────────────────── */
-::-webkit-scrollbar       { width: 4px; }
-::-webkit-scrollbar-track { background: #070707; }
-::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: #00ff88; }
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #c9d1de;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
 
-/* ── Noise overlay ───────────────────────────────────────────────────────────── */
+/* ── Soft paper grain (atmosphere, not glow) ─────────────────────────────────── */
 body::before {
-  content: '';
+  content: "";
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.4;
-}
-
-/*
- * ── Cursor spotlight ─────────────────────────────────────────────────────────
- *
- * A radial gradient centred on the cursor (via CSS custom properties).
- * Stacked above the noise overlay (z-index 10000) but pointer-events: none
- * so it never blocks interaction.
- *
- * Opacity is intentionally very low (0.06) — just enough to give the page
- * a living, reactive quality without being distracting.
- *
- * NOTE: This layer requires CursorSpotlight.tsx to be mounted in your layout
- *       so that --cx / --cy are updated on mousemove. Without it the glow
- *       sits at the default centre position (50vw, 50vh).
- */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10000;
-
-  background: radial-gradient(
-    700px circle at var(--cx) var(--cy),
-    rgba(0, 255, 136, 0.06) 0%,
-    rgba(0, 255, 136, 0.02) 35%,
-    transparent              70%
-  );
-
-  /*
-   * `will-change: background` hints to the browser to composite this layer —
-   * keeps the spotlight smooth even on lower-end devices.
-   */
-  will-change: background;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::after {
-    display: none;
-  }
+  opacity: 0.55;
 }
 
 /* ── Selection ───────────────────────────────────────────────────────────────── */
 ::selection {
-  background: rgba(0, 255, 136, 0.2);
-  color: #00ff88;
+  background: rgba(47, 91, 255, 0.18);
+  color: var(--color-ink);
 }
 
 /* ── Focus ring ──────────────────────────────────────────────────────────────── */
 *:focus-visible {
-  outline: 1px solid #00ff88;
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 
 /* ── Font utilities ──────────────────────────────────────────────────────────── */
 @layer utilities {
-  .font-display { font-family: var(--font-syne), sans-serif; }
-  .font-body    { font-family: var(--font-instrument), sans-serif; }
-  .font-mono    { font-family: var(--font-dm-mono), monospace; }
+  .font-display {
+    font-family: var(--font-syne), sans-serif;
+  }
+  .font-body {
+    font-family: var(--font-instrument), sans-serif;
+  }
+  .font-mono {
+    font-family: var(--font-dm-mono), monospace;
+  }
 }
 
 /* ── Divider ─────────────────────────────────────────────────────────────────── */
 .divider-line {
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #222, transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-border),
+    transparent
+  );
+}
+
+/* ── Form controls ───────────────────────────────────────────────────────────── */
+.form-field {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  color: var(--color-ink);
+  font-size: 0.925rem;
+  outline: none;
+  transition: border-color 0.2s ease, transform 0.15s ease;
+}
+
+.form-field:focus {
+  border-color: var(--color-accent);
+}
+
+.form-field::placeholder {
+  color: var(--color-ink-faint);
 }

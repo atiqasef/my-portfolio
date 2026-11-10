@@ -3,25 +3,66 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/lib/data";
-import { usePrefersReducedMotion } from "@/lib/motion";
+import {
+  duration,
+  easeOut,
+  getFadeUp,
+  getStagger,
+  usePrefersReducedMotion,
+} from "@/lib/motion";
 import SectionHeader from "./SectionHeader";
 import FadeUp from "./FadeUp";
+import {
+  IconMail,
+  IconGlobe,
+  IconCalendar,
+  IconPin,
+} from "./Icons";
 
 const contactItems = [
-  { icon: "✉️", label: "EMAIL", value: siteConfig.email, href: `mailto:${siteConfig.email}` },
-  { icon: "🌐", label: "WEBSITE", value: siteConfig.website, href: siteConfig.website },
-  { icon: "📅", label: "BOOK A CALL", value: "https://cal.com/atiq-dev", href: siteConfig.booking },
-  { icon: "📍", label: "LOCATION", value: siteConfig.location, href: "#" },
+  {
+    icon: IconMail,
+    label: "EMAIL",
+    value: siteConfig.email,
+    href: `mailto:${siteConfig.email}`,
+  },
+  {
+    icon: IconGlobe,
+    label: "WEBSITE",
+    value: siteConfig.website,
+    href: siteConfig.website,
+  },
+  {
+    icon: IconCalendar,
+    label: "BOOK A CALL",
+    value: "https://cal.com/atiq-dev",
+    href: siteConfig.booking,
+  },
+  {
+    icon: IconPin,
+    label: "LOCATION",
+    value: siteConfig.location,
+    href: "#",
+  },
 ];
 
 type FormState = "idle" | "sending" | "success" | "error";
 
 export default function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
   const [status, setStatus] = useState<FormState>("idle");
   const prefersReducedMotion = usePrefersReducedMotion();
+  const container = getStagger(prefersReducedMotion);
+  const item = getFadeUp(prefersReducedMotion);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
@@ -30,17 +71,23 @@ export default function Contact() {
     setStatus("sending");
 
     try {
-      const response = await fetch(`https://formsubmit.co/ajax/${siteConfig.email}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          subject: form.subject || `Message from ${form.name}`,
-          message: form.message,
-          _replyto: form.email,
-        }),
-      });
+      const response = await fetch(
+        `https://formsubmit.co/ajax/${siteConfig.email}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            subject: form.subject || `Message from ${form.name}`,
+            message: form.message,
+            _replyto: form.email,
+          }),
+        }
+      );
 
       if (!response.ok) throw new Error("Unable to send message");
 
@@ -53,66 +100,96 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-28 relative z-10">
+    <section id="contact" className="py-24 md:py-28 relative z-10">
       <div className="container mx-auto px-[5%]">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-start">
-
-          {/* Left */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-start">
           <div>
             <SectionHeader tag="05 — Contact" title="" />
 
-            <FadeUp delay={0.1}>
-              <h2 className="font-display font-bold text-4xl md:text-5xl tracking-tight leading-[1.2] mb-4">
+            <FadeUp delay={0.08}>
+              <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight leading-[1.15] mb-4 text-ink">
                 {"Let's build something"}
                 <br />
-                <span className="text-green">great together.</span>
+                <span className="text-accent">great together.</span>
               </h2>
             </FadeUp>
 
-            <FadeUp delay={0.2}>
-              <p className="text-text-muted text-base leading-relaxed font-light mb-10">
-                Have a project in mind? Book a call or drop me an email — I usually respond within 24 hours.
+            <FadeUp delay={0.14}>
+              <p className="text-ink-muted text-base leading-relaxed font-light mb-10 max-w-md">
+                Have a project in mind? Book a call or drop me an email — I
+                usually respond within 24 hours.
               </p>
             </FadeUp>
 
-            <div className="flex flex-col gap-3">
-              {contactItems.map((item, i) => (
-                <FadeUp key={item.label} delay={0.2 + i * 0.08}>
+            <motion.div
+              variants={container}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-40px" }}
+              className="flex flex-col gap-3"
+            >
+              {contactItems.map((entry) => {
+                const Icon = entry.icon;
+                return (
                   <motion.a
-                    href={item.href}
-                    target={item.href.startsWith("http") ? "_blank" : undefined}
-                    rel="noreferrer"
-                    whileHover={prefersReducedMotion ? undefined : { x: 4 }}
-                    transition={{ duration: 0.2 }}
-                    className="flex items-center gap-4 px-5 py-4 bg-surface border border-border rounded hover:border-green transition-colors group"
+                    key={entry.label}
+                    variants={item}
+                    href={entry.href}
+                    target={entry.href.startsWith("http") ? "_blank" : undefined}
+                    rel={entry.href.startsWith("http") ? "noreferrer" : undefined}
+                    whileHover={
+                      prefersReducedMotion
+                        ? undefined
+                        : { x: 3, transition: { duration: duration.fast } }
+                    }
+                    className="flex items-center gap-4 px-5 py-4 bg-surface border border-border hover:border-accent/40 transition-colors group"
                   >
-                    <div className="w-10 h-10 rounded bg-green/8 border border-green/15 flex items-center justify-center flex-shrink-0 text-lg">
-                      {item.icon}
+                    <div className="w-10 h-10 border border-accent/15 bg-accent/8 flex items-center justify-center flex-shrink-0 text-accent">
+                      <Icon size={18} />
                     </div>
                     <div>
-                      <div className="font-mono text-[0.68rem] text-text-faint tracking-[0.08em] mb-0.5">
-                        {item.label}
+                      <div className="font-mono text-[0.68rem] text-ink-faint tracking-[0.08em] mb-0.5">
+                        {entry.label}
                       </div>
-                      <div className="text-text-muted text-sm group-hover:text-text transition-colors">
-                        {item.value}
+                      <div className="text-ink-muted text-sm group-hover:text-ink transition-colors break-all">
+                        {entry.value}
                       </div>
                     </div>
                   </motion.a>
-                </FadeUp>
-              ))}
-            </div>
+                );
+              })}
+            </motion.div>
           </div>
 
-          {/* Right — Form */}
-          <FadeUp delay={0.3}>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <FadeUp delay={0.16}>
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-5 bg-surface border border-border p-6 sm:p-8"
+            >
               {[
-                { name: "name", label: "NAME", type: "text", placeholder: "Your name" },
-                { name: "email", label: "EMAIL", type: "email", placeholder: "your@email.com" },
-                { name: "subject", label: "SUBJECT", type: "text", placeholder: "Project idea, collaboration..." },
+                {
+                  name: "name",
+                  label: "NAME",
+                  type: "text",
+                  placeholder: "Your name",
+                },
+                {
+                  name: "email",
+                  label: "EMAIL",
+                  type: "email",
+                  placeholder: "your@email.com",
+                },
+                {
+                  name: "subject",
+                  label: "SUBJECT",
+                  type: "text",
+                  placeholder: "Project idea, collaboration...",
+                },
               ].map((field) => (
                 <div key={field.name} className="flex flex-col gap-2">
-                  <label className="font-mono text-xs text-text-muted tracking-[0.08em]">{field.label}</label>
+                  <label className="font-mono text-xs text-ink-muted tracking-[0.08em]">
+                    {field.label}
+                  </label>
                   <input
                     type={field.type}
                     name={field.name}
@@ -120,21 +197,23 @@ export default function Contact() {
                     onChange={handleChange}
                     required
                     placeholder={field.placeholder}
-                    className="bg-surface border border-border rounded px-4 py-3 text-text text-sm outline-none focus:border-green transition-colors placeholder:text-text-faint"
+                    className="form-field"
                   />
                 </div>
               ))}
 
               <div className="flex flex-col gap-2">
-                <label className="font-mono text-xs text-text-muted tracking-[0.08em]">MESSAGE</label>
+                <label className="font-mono text-xs text-ink-muted tracking-[0.08em]">
+                  MESSAGE
+                </label>
                 <textarea
                   name="message"
                   value={form.message}
                   onChange={handleChange}
                   required
-                  rows={5}
+                  rows={6}
                   placeholder="Tell me about your project..."
-                  className="bg-surface border border-border rounded px-4 py-3 text-text text-sm outline-none focus:border-green transition-colors placeholder:text-text-faint resize-y min-h-[130px]"
+                  className="form-field resize-y min-h-[140px]"
                 />
               </div>
 
@@ -144,28 +223,38 @@ export default function Contact() {
                 whileHover={
                   prefersReducedMotion
                     ? undefined
-                    : { y: -2, boxShadow: "0 8px 30px rgba(0,255,136,0.2)" }
+                    : { y: -2, transition: { duration: duration.fast, ease: easeOut } }
                 }
                 whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
-                className={`w-full py-3.5 font-mono text-sm font-medium rounded tracking-[0.06em] transition-all ${
+                className={`w-full py-3.5 font-mono text-sm font-medium tracking-[0.06em] transition-colors ${
                   status === "success"
-                    ? "bg-green-dark text-bg cursor-default"
+                    ? "bg-accent-dark text-white cursor-default"
                     : status === "sending"
-                    ? "bg-green/60 text-bg cursor-wait"
-                    : "bg-green text-bg hover:bg-green-dark"
+                    ? "bg-accent/70 text-white cursor-wait"
+                    : "bg-accent text-white hover:bg-accent-dark"
                 }`}
               >
-                {status === "sending" ? "SENDING..." : status === "success" ? "MESSAGE SENT!" : "SEND MESSAGE →"}
+                {status === "sending"
+                  ? "SENDING..."
+                  : status === "success"
+                  ? "MESSAGE SENT"
+                  : "SEND MESSAGE"}
               </motion.button>
 
+              {status === "success" && (
+                <p className="text-accent font-mono text-xs text-center" role="status">
+                  Thanks — I&apos;ll get back to you soon.
+                </p>
+              )}
+
               {status === "error" && (
-                <p className="text-red-400 font-mono text-xs text-center">
-                  Something went wrong. Please email me directly at {siteConfig.email}.
+                <p className="text-red-600 font-mono text-xs text-center" role="alert">
+                  Something went wrong. Please email me directly at{" "}
+                  {siteConfig.email}.
                 </p>
               )}
             </form>
           </FadeUp>
-
         </div>
       </div>
     </section>

@@ -1,143 +1,66 @@
-// components/Skills.tsx
 "use client";
 
-import { motion, Variants } from "framer-motion";
+import { motion } from "framer-motion";
 import { skills } from "@/lib/data";
-import { usePrefersReducedMotion } from "@/lib/motion";
+import {
+  duration,
+  easeOut,
+  getFadeUp,
+  getStagger,
+  usePrefersReducedMotion,
+} from "@/lib/motion";
 import SectionHeader from "./SectionHeader";
-import FadeUp from "./FadeUp";
-
-// ─── Animation variants ────────────────────────────────────────────────────────
-
-/**
- * Container variant — when this enters the viewport it fires
- * `staggerChildren` which cascades into each chip.
- */
-const gridVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      // 50 ms between each chip, starts after 80 ms initial delay
-      staggerChildren:  0.05,
-      delayChildren:    0.08,
-    },
-  },
-};
-
-/**
- * Chip variant — scale up from 82 % + fade in + slight upward drift.
- * The cubic ease matches the rest of the site's easing curve.
- */
-const chipVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    scale:   0.82,
-    y:       14,
-  },
-  visible: {
-    opacity: 1,
-    scale:   1,
-    y:       0,
-    transition: {
-      duration: 0.38,
-      ease: [0.21, 0.47, 0.32, 0.98],
-    },
-  },
-};
-
-// ─── SkillChip ─────────────────────────────────────────────────────────────────
-
-function SkillChip({
-  name,
-  icon,
-  reducedMotion,
-}: {
-  name:      string;
-  icon:      string;
-  reducedMotion: boolean;
-}) {
-  return (
-    <motion.div
-      variants={reducedMotion ? undefined : chipVariants}
-      whileHover={
-        reducedMotion
-          ? undefined
-          : {
-              y:           -4,
-              scale:       1.05,
-              borderColor: "#00ff88",
-              transition:  { duration: 0.18 },
-            }
-      }
-      className="bg-surface border border-border rounded p-5 flex flex-col items-center gap-3 cursor-default relative text-center group transition-colors"
-    >
-      <span className="text-2xl leading-none">{icon}</span>
-      <span className="font-mono text-xs text-text-muted group-hover:text-text transition-colors tracking-[0.04em]">
-        {name}
-      </span>
-    </motion.div>
-  );
-}
-
-// ─── AnimatedGrid ──────────────────────────────────────────────────────────────
-
-/**
- * Wraps a grid with the stagger container.
- * `whileInView` on the container fires once — individual chips cascade via
- * `staggerChildren` in `gridVariants`.
- */
-function AnimatedGrid({
-  children,
-  reducedMotion,
-}: {
-  children: React.ReactNode;
-  reducedMotion: boolean;
-}) {
-  if (reducedMotion) {
-    return (
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-        {children}
-      </div>
-    );
-  }
-
-  return (
-    <motion.div
-      variants={gridVariants}
-      initial="hidden"
-      animate="visible"
-      className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3"
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-// ─── Section ───────────────────────────────────────────────────────────────────
+import { SkillIcon } from "./Icons";
 
 export default function Skills() {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const container = getStagger(prefersReducedMotion);
+  const item = getFadeUp(prefersReducedMotion);
 
   return (
-    <section id="skills" className="py-28 bg-bg2 relative z-10">
+    <section id="skills" className="py-24 md:py-28 bg-bg2 relative z-10">
       <div className="container mx-auto px-[5%]">
         <SectionHeader
           tag="02 — Skills"
-          title={<>Tech stack &amp;<br />tools I use.</>}
+          title={
+            <>
+              Tech stack &amp;
+              <br />
+              tools I use.
+            </>
+          }
         />
 
-        {/* Skills */}
-        <FadeUp>
-          <AnimatedGrid reducedMotion={prefersReducedMotion}>
-            {skills.current.map((skill) => (
-              <SkillChip
-                key={skill.name}
-                {...skill}
-                reducedMotion={prefersReducedMotion}
-              />
-            ))}
-          </AnimatedGrid>
-        </FadeUp>
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3"
+        >
+          {skills.current.map((skill) => (
+            <motion.div
+              key={skill.name}
+              variants={item}
+              whileHover={
+                prefersReducedMotion
+                  ? undefined
+                  : {
+                      y: -3,
+                      transition: { duration: duration.fast, ease: easeOut },
+                    }
+              }
+              className="bg-surface border border-border p-4 sm:p-5 flex flex-col items-center gap-3 text-center group hover:border-accent/40 hover:shadow-soft transition-[border-color,box-shadow] duration-200"
+            >
+              <span className="text-accent">
+                <SkillIcon name={skill.icon} size={22} />
+              </span>
+              <span className="font-mono text-[0.7rem] sm:text-xs text-ink-muted group-hover:text-ink transition-colors tracking-[0.04em]">
+                {skill.name}
+              </span>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );

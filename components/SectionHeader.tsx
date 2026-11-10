@@ -7,15 +7,15 @@ interface SectionHeaderProps {
 
 export default function SectionHeader({ tag, title }: SectionHeaderProps) {
   return (
-    <div className="mb-14">
+    <div className="mb-12 md:mb-14">
       <FadeUp>
-        <span className="font-mono text-xs text-green tracking-[0.12em] block mb-4">
+        <span className="font-mono text-xs text-accent tracking-[0.12em] block mb-4">
           {tag}
         </span>
-        <h2 className="font-display font-bold text-4xl md:text-5xl tracking-tight leading-[1.1]">
+        <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight leading-[1.1] text-ink">
           {title}
         </h2>
-        <div className="w-10 h-0.5 bg-green mt-4 rounded-full" />
+        <div className="w-10 h-0.5 bg-accent mt-4" />
       </FadeUp>
     </div>
   );

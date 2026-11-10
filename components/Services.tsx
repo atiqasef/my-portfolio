@@ -2,54 +2,66 @@
 
 import { motion } from "framer-motion";
 import { services } from "@/lib/data";
-import { usePrefersReducedMotion } from "@/lib/motion";
+import {
+  duration,
+  easeOut,
+  getFadeUp,
+  getStagger,
+  usePrefersReducedMotion,
+} from "@/lib/motion";
 import SectionHeader from "./SectionHeader";
-import FadeUp from "./FadeUp";
+import { SkillIcon } from "./Icons";
 
 export default function Services() {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const container = getStagger(prefersReducedMotion);
+  const item = getFadeUp(prefersReducedMotion);
 
   return (
-    <section id="services" className="py-28 bg-bg2 relative z-10">
+    <section id="services" className="py-24 md:py-28 bg-bg2 relative z-10">
       <div className="container mx-auto px-[5%]">
         <SectionHeader
           tag="04 — Services"
-          title={<>What I can<br />do for you.</>}
+          title={
+            <>
+              What I can
+              <br />
+              do for you.
+            </>
+          }
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {services.map((service, i) => (
-            <FadeUp key={service.title} delay={i * 0.1}>
-              <motion.div
-                whileHover={prefersReducedMotion ? undefined : { y: -4 }}
-                transition={{ duration: 0.25 }}
-                className="bg-surface border border-border rounded p-10 relative overflow-hidden group transition-colors hover:border-border2"
-              >
-                {/* Bottom shimmer on hover */}
-                {!prefersReducedMotion && (
-                  <motion.div
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-green to-transparent"
-                    initial={{ scaleX: 0 }}
-                    whileHover={{ scaleX: 1 }}
-                    transition={{ duration: 0.35 }}
-                  />
-                )}
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"
+        >
+          {services.map((service) => (
+            <motion.div
+              key={service.title}
+              variants={item}
+              whileHover={
+                prefersReducedMotion
+                  ? undefined
+                  : { y: -3, transition: { duration: duration.fast, ease: easeOut } }
+              }
+              className="bg-surface border border-border p-8 md:p-10 group hover:border-accent/30 hover:shadow-soft transition-[border-color,box-shadow] duration-250"
+            >
+              <div className="w-11 h-11 border border-accent/20 bg-accent/8 flex items-center justify-center text-accent mb-6">
+                <SkillIcon name={service.icon} size={20} />
+              </div>
 
-                {/* Icon */}
-                <div className="w-12 h-12 rounded bg-green/8 border border-green/15 flex items-center justify-center text-2xl mb-6">
-                  {service.icon}
-                </div>
-
-                <h3 className="font-display font-bold text-lg tracking-tight mb-3 group-hover:text-green transition-colors">
-                  {service.title}
-                </h3>
-                <p className="text-text-muted text-sm leading-relaxed font-light">
-                  {service.desc}
-                </p>
-              </motion.div>
-            </FadeUp>
+              <h3 className="font-display font-bold text-lg tracking-tight mb-3 group-hover:text-accent transition-colors">
+                {service.title}
+              </h3>
+              <p className="text-ink-muted text-sm leading-relaxed font-light">
+                {service.desc}
+              </p>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
