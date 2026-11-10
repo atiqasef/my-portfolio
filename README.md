@@ -1,8 +1,8 @@
 # Atiq Asef — Portfolio Website
 
-A modern, dark, minimal portfolio built with **Next.js 14**, **Tailwind CSS**, and **Framer Motion**.
+A modern, dark, minimal portfolio built with **Next.js 14**, **Tailwind CSS**, and **Framer Motion**. Configured as a **static export** for hosting on Vercel (or any static host).
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # 1. Install dependencies
@@ -15,78 +15,73 @@ npm run dev
 http://localhost:3000
 ```
 
-## 📁 Project Structure
+## Scripts
 
-```
-rushd-portfolio/
-├── app/
-│   ├── layout.tsx        # Root layout + metadata + SEO
-│   ├── page.tsx          # Main page (assembles all sections)
-│   └── globals.css       # Global styles, fonts, scrollbar
-├── components/
-│   ├── Navbar.tsx        # Sticky nav + mobile menu
-│   ├── Hero.tsx          # Hero section
-│   ├── About.tsx         # About + journey timeline
-│   ├── Skills.tsx        # Tech stack grid
-│   ├── Projects.tsx      # Project cards
-│   ├── Services.tsx      # Services cards
-│   ├── Contact.tsx       # Contact form + info
-│   ├── Footer.tsx        # Footer with socials
-│   ├── FadeUp.tsx        # Reusable animation wrapper
-│   ├── SectionHeader.tsx # Reusable section heading
-│   └── GridBackground.tsx# Animated grid background
-├── lib/
-│   └── data.ts           # ⭐ ALL your content lives here
-└── public/
-    ├── profile.jpg       # ← Add your photo here
-    ├── Atiq-Asef-CV.pdf  # ← Add your CV here
-    └── projects/         # ← Add project screenshots here
-```
-
-## ✏️ How to Customize
-
-### 1. Update Your Info
-Edit **`lib/data.ts`** — this is the single source of truth for all content:
-- Personal info (name, email, links)
-- Bio paragraphs
-- Stats
-- Journey timeline
-- Skills list
-- Projects
-- Services
-
-### 2. Add Your Photo
-Place your photo at `/public/profile.jpg`, then in `components/Hero.tsx` uncomment the `<Image>` block and remove the placeholder div.
-
-### 3. Add Project Screenshots
-Place screenshots in `/public/projects/` and update the `Projects.tsx` image references.
-
-### 4. Add Your CV
-Place your CV PDF at `/public/Atiq-Asef-CV.pdf`.
-
-### 5. Fix Social Links
-In `lib/data.ts`, replace:
-```ts
-linkedin: "https://linkedin.com/in/YOUR_LINKEDIN",
-github:   "https://github.com/YOUR_GITHUB",
-```
-
-### 6. Set Up Contact Form (EmailJS)
-In `components/Contact.tsx`, replace the mock `setTimeout` with EmailJS:
 ```bash
-npm install @emailjs/browser
+npm run dev      # local development server
+npm run lint     # ESLint (next/core-web-vitals)
+npm run build    # production static export → /out
 ```
-Then follow: https://www.emailjs.com/docs/
 
-## 🌐 Deploy to Vercel
+With `output: 'export'` in `next.config.mjs`, `npm run build` writes a static site to the `out/` folder. Serve that folder on any static host. `npm start` (`next start`) is not the primary deploy path for this static export setup.
+
+## Project Structure
+
+```
+my-portfolio/
+├── app/
+│   ├── layout.tsx           # Root layout + metadata + fonts
+│   ├── page.tsx             # Main page (assembles all sections)
+│   ├── globals.css          # Global styles, scrollbar, utilities
+│   ├── icon.svg             # Favicon
+│   ├── robots.ts            # robots.txt
+│   └── sitemap.ts           # sitemap.xml
+├── components/
+│   ├── Navbar.tsx
+│   ├── Hero.tsx
+│   ├── About.tsx
+│   ├── Skills.tsx
+│   ├── Projects.tsx
+│   ├── Services.tsx
+│   ├── Contact.tsx          # FormSubmit.co contact form
+│   ├── Footer.tsx
+│   ├── FadeUp.tsx
+│   ├── SectionHeader.tsx
+│   ├── CursorSpotlight.tsx
+│   └── GridBackground.tsx
+├── lib/
+│   ├── data.ts              # ALL site content lives here
+│   └── motion.ts            # prefers-reduced-motion helper
+└── public/
+    ├── profile/profile.jpg
+    ├── Atiq-Asef-CV.pdf
+    ├── og-image.png         # Open Graph image
+    └── projects/            # project screenshots / previews
+```
+
+## How to Customize
+
+### 1. Update your info
+Edit **`lib/data.ts`** — single source of truth for personal info, bio, journey, skills, projects, and services.
+
+### 2. Photo / CV / project media
+- Profile photo: `/public/profile/profile.jpg`
+- CV: `/public/Atiq-Asef-CV.pdf` (Download CV button links here)
+- Project previews: `/public/projects/`
+
+### 3. Contact form (FormSubmit)
+The contact form posts to [FormSubmit.co](https://formsubmit.co/) using the email in `lib/data.ts`. FormSubmit may require a one-time email confirmation the first time a message is sent.
+
+## Deploy to Vercel
 
 ```bash
 # Push to GitHub first, then:
 npx vercel
 ```
-Or connect your GitHub repo at vercel.com for auto-deploy.
 
-## 🛠 Tech Stack
+Or connect the GitHub repo at vercel.com for auto-deploy. Canonical site URL: `https://atiqasef.vercel.app`.
+
+## Tech Stack
 
 | Tool | Version |
 |---|---|
@@ -96,5 +91,5 @@ Or connect your GitHub repo at vercel.com for auto-deploy.
 | Tailwind CSS | 3.4 |
 | Framer Motion | 11 |
 
-## 📝 License
+## License
 MIT — feel free to use and modify.

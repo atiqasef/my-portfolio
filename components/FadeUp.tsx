@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ReactNode } from "react";
+import { usePrefersReducedMotion } from "@/lib/motion";
 
 interface FadeUpProps {
   children: ReactNode;
@@ -16,6 +17,12 @@ export default function FadeUp({
   className = "",
   once = true,
 }: FadeUpProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}

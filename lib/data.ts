@@ -1,14 +1,16 @@
+export const SITE_URL = "https://atiqasef.vercel.app";
+
 export const siteConfig = {
   name: "Atiq Asef",
   title: "Full Stack Web Developer",
   company: "Atiq Asef",
   location: "Dhaka, Bangladesh",
   email: "atiqasef19@gmail.com",
-  website: "https://atiqasef.vercel.app/",
+  website: SITE_URL,
   booking: "https://cal.com/atiq-dev",
   linkedin: "https://www.linkedin.com/in/atiqasef",
   github: "https://github.com/atiqasef",
-  cv: "/Atiq-Asef-CV.pdf",                            // ← Add CV to /public
+  cv: "/Atiq-Asef-CV.pdf",
   tagline: "Building fast, scalable, and beautiful web applications.",
   bio: [
     "I'm Atiq Asef, a Full Stack Web Developer based in Dhaka, Bangladesh, focused on building products that are fast, functional, and beautifully designed.",
@@ -39,7 +41,12 @@ export const journey = [
     title: "First Freelance Projects",
     desc: "Started freelancing on Fiverr, specializing in WooCommerce shipping integrations with UPS, FedEx, and custom carrier APIs for e-commerce clients.",
   },
-
+  // TODO: User to write 2024–2026 career content (title + description). Do not invent facts.
+  {
+    year: "2024 — 2026",
+    title: "TODO: Add your title for this period",
+    desc: "TODO: Add a short description of your work and growth during 2024–2026.",
+  },
 ];
 
 export const skills = {
@@ -64,45 +71,35 @@ export const skills = {
 
 export const projects = [
   {
-    title: "E-Commerce Platform",
+    title: "Billr",
     description:
-      "A full-featured online store with product management, cart, Stripe checkout, and an admin dashboard with analytics.",
-    stack: ["Next.js", "MongoDB", "Stripe", "Tailwind CSS"],
-    icon: "🛒",
-    live: "#",     // ← Replace with live URL
-    github: "#",   // ← Replace with GitHub URL
-    color: "#00ff88",
+      "AI-powered invoicing SaaS. Generate professional invoices instantly, manage clients, track payments, and export PDFs — built for freelancers.",
+    stack: ["Next.js", "TypeScript", "Prisma", "MongoDB", "Tailwind CSS"],
+    icon: "🧾",
+    image: "/projects/billr-preview.gif",
+    live: "https://billr-woad.vercel.app",
+    github: "https://github.com/atiqasef/billr",
+    color: "#3b82f6",
   },
   {
-  title: "Billr — AI Invoice SaaS",
-  description:
-    "AI-powered invoicing SaaS. Generate professional invoices instantly, manage clients, track payments, and export PDFs — built for freelancers.",
-  stack: ["Next.js", "TypeScript", "Prisma", "MongoDB", "Tailwind CSS"],
-  icon: "🧾",
-  image: "/projects/billr-preview.gif",
-  live: "https://billr-woad.vercel.app",
-  github: "",
-  color: "#3b82f6",
-},
-  {
-    title: "Real Estate Listing App",
-    description:
-      "Property listing and booking platform with map integration, image uploads, advanced filters, and agent contact system.",
-    stack: ["Next.js", "MongoDB", "Cloudinary", "MapBox"],
+    title: "RentNest",
+    description: "Property rental marketplace for browsing and listing rentals.",
+    // TODO: Add tech stack once confirmed (none in previous data for this project).
+    stack: [] as string[],
     icon: "🏠",
-    live: "#",
-    github: "#",
+    live: "https://rent-nest-client-flame.vercel.app",
     color: "#f59e0b",
   },
   {
-    title: "Real-Time Chat App",
+    title: "ClientHunts",
     description:
-      "Chat app with private and group messaging, online presence indicators, file sharing, and push notifications.",
-    stack: ["React", "Socket.io", "Node.js", "MongoDB"],
-    icon: "💬",
-    live: "#",
-    github: "#",
-    color: "#8b5cf6",
+      "Lead-discovery tool that finds potential clients using Google Places and web search.",
+    // TODO: Add tech stack once confirmed (none in previous data for this project).
+    stack: [] as string[],
+    icon: "🎯",
+    live: "https://clienthunts.vercel.app",
+    github: "https://github.com/atiqasef/ClientHunts",
+    color: "#00ff88",
   },
 ];
 

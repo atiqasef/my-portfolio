@@ -3,12 +3,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { siteConfig } from "@/lib/data";
+import { usePrefersReducedMotion } from "@/lib/motion";
 import SectionHeader from "./SectionHeader";
 import FadeUp from "./FadeUp";
 
 const contactItems = [
   { icon: "✉️", label: "EMAIL", value: siteConfig.email, href: `mailto:${siteConfig.email}` },
-  { icon: "🌐", label: "WEBSITE", value: "https://atiqasef.com", href: siteConfig.website },
+  { icon: "🌐", label: "WEBSITE", value: siteConfig.website, href: siteConfig.website },
   { icon: "📅", label: "BOOK A CALL", value: "https://cal.com/atiq-dev", href: siteConfig.booking },
   { icon: "📍", label: "LOCATION", value: siteConfig.location, href: "#" },
 ];
@@ -18,6 +19,7 @@ type FormState = "idle" | "sending" | "success" | "error";
 export default function Contact() {
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState<FormState>("idle");
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -80,7 +82,7 @@ export default function Contact() {
                     href={item.href}
                     target={item.href.startsWith("http") ? "_blank" : undefined}
                     rel="noreferrer"
-                    whileHover={{ x: 4 }}
+                    whileHover={prefersReducedMotion ? undefined : { x: 4 }}
                     transition={{ duration: 0.2 }}
                     className="flex items-center gap-4 px-5 py-4 bg-surface border border-border rounded hover:border-green transition-colors group"
                   >
@@ -139,8 +141,12 @@ export default function Contact() {
               <motion.button
                 type="submit"
                 disabled={status === "sending" || status === "success"}
-                whileHover={{ y: -2, boxShadow: "0 8px 30px rgba(0,255,136,0.2)" }}
-                whileTap={{ scale: 0.98 }}
+                whileHover={
+                  prefersReducedMotion
+                    ? undefined
+                    : { y: -2, boxShadow: "0 8px 30px rgba(0,255,136,0.2)" }
+                }
+                whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
                 className={`w-full py-3.5 font-mono text-sm font-medium rounded tracking-[0.06em] transition-all ${
                   status === "success"
                     ? "bg-green-dark text-bg cursor-default"
