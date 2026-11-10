@@ -1,21 +1,37 @@
 import FadeUp from "./FadeUp";
 
 interface SectionHeaderProps {
-  tag: string;
+  tag?: string;
   title: string | React.ReactNode;
+  onDark?: boolean;
+  className?: string;
 }
 
-export default function SectionHeader({ tag, title }: SectionHeaderProps) {
+export default function SectionHeader({
+  tag,
+  title,
+  onDark = false,
+  className = "",
+}: SectionHeaderProps) {
   return (
-    <div className="mb-12 md:mb-14">
+    <div className={`mb-12 md:mb-16 ${className}`}>
       <FadeUp>
-        <span className="font-mono text-xs text-accent tracking-[0.12em] block mb-4">
-          {tag}
-        </span>
-        <h2 className="font-display font-bold text-3xl sm:text-4xl md:text-5xl tracking-tight leading-[1.1] text-ink">
+        {tag ? (
+          <span
+            className={`font-mono text-xs tracking-[0.14em] block mb-5 ${
+              onDark ? "text-ondark-muted" : "text-ink-faint"
+            }`}
+          >
+            {tag}
+          </span>
+        ) : null}
+        <h2
+          className={`font-display font-light text-[clamp(2.25rem,5vw,3.75rem)] tracking-tight leading-[1.08] ${
+            onDark ? "text-ondark" : "text-ink"
+          }`}
+        >
           {title}
         </h2>
-        <div className="w-10 h-0.5 bg-accent mt-4" />
       </FadeUp>
     </div>
   );

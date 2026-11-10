@@ -6,19 +6,22 @@
 
 :root {
   /*
-   * Studio Cobalt — refined light developer portfolio.
-   * Font CSS variables (--font-syne, --font-instrument, --font-dm-mono)
-   * are provided by next/font/google in app/layout.tsx.
+   * Editorial portfolio — near-black hero, warm off-white content,
+   * one muted sage accent. Fonts from next/font/google in layout.tsx.
    */
-  --color-bg: #f5f7fa;
-  --color-bg2: #eef1f6;
-  --color-surface: #ffffff;
-  --color-border: #e2e7ef;
-  --color-ink: #0b1220;
-  --color-ink-muted: #5a6577;
-  --color-ink-faint: #8b95a8;
-  --color-accent: #2f5bff;
-  --color-accent-dark: #1e44d6;
+  --color-hero: #0c0c0b;
+  --color-bg: #f3f0ea;
+  --color-bg2: #ebe7df;
+  --color-surface: #faf8f4;
+  --color-border: #ddd8ce;
+  --color-ink: #141413;
+  --color-ink-muted: #5c5a55;
+  --color-ink-faint: #8a877f;
+  --color-accent: #6f8f7a;
+  --color-accent-soft: #9fb5a6;
+  --color-accent-dark: #4f6b58;
+  --color-on-dark: #f3f0ea;
+  --color-on-dark-muted: #a8a59c;
   --space-unit: 4px;
 }
 
@@ -64,40 +67,43 @@ body {
   background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: #c9d1de;
+  background: #c9c4b8;
   border-radius: 2px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-accent);
 }
 
-/* ── Soft paper grain (atmosphere, not glow) ─────────────────────────────────── */
+/* ── Soft paper grain ────────────────────────────────────────────────────────── */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.55;
+  opacity: 0.5;
 }
 
 /* ── Selection ───────────────────────────────────────────────────────────────── */
 ::selection {
-  background: rgba(47, 91, 255, 0.18);
+  background: rgba(111, 143, 122, 0.28);
   color: var(--color-ink);
 }
 
 /* ── Focus ring ──────────────────────────────────────────────────────────────── */
 *:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-accent-dark);
   outline-offset: 2px;
 }
 
 /* ── Font utilities ──────────────────────────────────────────────────────────── */
 @layer utilities {
   .font-display {
-    font-family: var(--font-syne), sans-serif;
+    font-family: var(--font-instrument), sans-serif;
+  }
+  .font-serif {
+    font-family: var(--font-instrument-serif), Georgia, serif;
   }
   .font-body {
     font-family: var(--font-instrument), sans-serif;
@@ -107,10 +113,57 @@ body::before {
   }
 }
 
-/* ── Divider ─────────────────────────────────────────────────────────────────── */
+/* ── Hero atmospheric background ─────────────────────────────────────────────── */
+.hero-atmosphere {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--color-hero);
+}
+
+.hero-atmosphere__glow {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(ellipse 55% 45% at 72% 28%, rgba(111, 143, 122, 0.22) 0%, transparent 58%),
+    radial-gradient(ellipse 45% 40% at 18% 72%, rgba(159, 181, 166, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 50% 110%, rgba(80, 70, 55, 0.35) 0%, transparent 60%),
+    linear-gradient(165deg, #141413 0%, #0c0c0b 48%, #10110f 100%);
+  animation: heroDrift 18s ease-in-out infinite alternate;
+}
+
+.hero-atmosphere__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.35;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+@keyframes heroDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(-2%, 1.5%, 0) scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-atmosphere__glow {
+    animation: none;
+  }
+}
+
+/* ── Thin section / row dividers ─────────────────────────────────────────────── */
 .divider-line {
   width: 100%;
   height: 1px;
+  background: var(--color-border);
+}
+
+.divider-line--soft {
   background: linear-gradient(
     90deg,
     transparent,
@@ -123,7 +176,7 @@ body::before {
 .form-field {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 6px;
+  border-radius: 2px;
   padding: 0.85rem 1rem;
   color: var(--color-ink);
   font-size: 0.925rem;
@@ -132,7 +185,7 @@ body::before {
 }
 
 .form-field:focus {
-  border-color: var(--color-accent);
+  border-color: var(--color-accent-dark);
 }
 
 .form-field::placeholder {
