@@ -41,31 +41,31 @@ export const journey = [
     title: "First Freelance Projects",
     desc: "Started freelancing on Fiverr, specializing in WooCommerce shipping integrations with UPS, FedEx, and custom carrier APIs for e-commerce clients.",
   },
-  // TODO: User to write 2024–2026 career content (title + description). Do not invent facts.
   {
     year: "2024 — 2026",
-    title: "TODO: Add your title for this period",
-    desc: "TODO: Add a short description of your work and growth during 2024–2026.",
+    title: "Full-stack work and full-time freelancing",
+    desc: "Kept building custom WooCommerce plugins, shipping integrations (DHL, UPS, USPS, Shippo) and payment fixes for clients abroad. Moved into full-stack work with Next.js, TypeScript and Node.js, built Billr, RentNest and ClientHunts, and started freelancing full-time in May 2026.",
   },
 ];
 
+/** Skill icon keys map to inline SVGs in components/Icons.tsx */
 export const skills = {
   current: [
-    { name: "HTML5", icon: "🌐" },
-    { name: "CSS3", icon: "🎨" },
-    { name: "JavaScript", icon: "⚡" },
-    { name: "React", icon: "⚛️" },
-    { name: "Next.js", icon: "▲" },
-    { name: "Node.js", icon: "🟢" },
-    { name: "MongoDB", icon: "🍃" },
-    { name: "Firebase", icon: "🔥" },
-    { name: "Tailwind CSS", icon: "💨" },
-    { name: "Payments", icon: "💳" },
-    { name: "Git / GitHub", icon: "🐙" },
-    { name: "TypeScript", icon: "🔷" },
-    { name: "PostgreSQL", icon: "🐘" },
-    { name: "Docker", icon: "🐳" },
-    { name: "AWS", icon: "☁️" },
+    { name: "HTML5", icon: "html" },
+    { name: "CSS3", icon: "css" },
+    { name: "JavaScript", icon: "js" },
+    { name: "React", icon: "react" },
+    { name: "Next.js", icon: "next" },
+    { name: "Node.js", icon: "node" },
+    { name: "MongoDB", icon: "mongo" },
+    { name: "Firebase", icon: "firebase" },
+    { name: "Tailwind CSS", icon: "tailwind" },
+    { name: "Payments", icon: "payments" },
+    { name: "Git / GitHub", icon: "git" },
+    { name: "TypeScript", icon: "ts" },
+    { name: "PostgreSQL", icon: "postgres" },
+    { name: "Docker", icon: "docker" },
+    { name: "AWS", icon: "aws" },
   ],
 };
 
@@ -75,52 +75,50 @@ export const projects = [
     description:
       "AI-powered invoicing SaaS. Generate professional invoices instantly, manage clients, track payments, and export PDFs — built for freelancers.",
     stack: ["Next.js", "TypeScript", "Prisma", "MongoDB", "Tailwind CSS"],
-    icon: "🧾",
     image: "/projects/billr-preview.gif",
     live: "https://billr-woad.vercel.app",
     github: "https://github.com/atiqasef/billr",
-    color: "#3b82f6",
+    color: "#2F5BFF",
   },
   {
     title: "RentNest",
     description: "Property rental marketplace for browsing and listing rentals.",
-    // TODO: Add tech stack once confirmed (none in previous data for this project).
-    stack: [] as string[],
-    icon: "🏠",
+    // Stack read from rent-nest-client package.json + README (public repo).
+    stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Stripe"],
     live: "https://rent-nest-client-flame.vercel.app",
-    color: "#f59e0b",
+    color: "#0B6E4F",
   },
   {
     title: "ClientHunts",
     description:
       "Lead-discovery tool that finds potential clients using Google Places and web search.",
-    // TODO: Add tech stack once confirmed (none in previous data for this project).
+    // TODO: Add tech stack once confirmed (ClientHunts repo not publicly readable).
     stack: [] as string[],
-    icon: "🎯",
     live: "https://clienthunts.vercel.app",
     github: "https://github.com/atiqasef/ClientHunts",
-    color: "#00ff88",
+    color: "#1A1F2C",
   },
 ];
 
+/** Service icon keys map to inline SVGs in components/Icons.tsx */
 export const services = [
   {
-    icon: "🌐",
+    icon: "fullstack",
     title: "Full Stack Development",
     desc: "End-to-end web application development — from frontend UI to backend APIs, databases, and deployment. Built with modern tech that scales.",
   },
   {
-    icon: "⚛️",
+    icon: "react",
     title: "React / Next.js Apps",
     desc: "Performant, SEO-optimized React and Next.js applications with server components, SSR, ISR, and clean architecture.",
   },
   {
-    icon: "🔌",
+    icon: "api",
     title: "API & Backend Development",
     desc: "RESTful APIs using Node.js and Express. Secure authentication, database design, and third-party integrations.",
   },
   {
-    icon: "💳",
+    icon: "payments",
     title: "Payment Integration",
     desc: "Seamless payment gateway integration with Stripe, SSLCommerz, and other providers. Subscriptions, one-time payments, and refunds.",
   },

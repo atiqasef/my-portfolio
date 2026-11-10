@@ -1,265 +1,149 @@
-// components/Projects.tsx
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { projects } from "@/lib/data";
-import { usePrefersReducedMotion } from "@/lib/motion";
+import {
+  duration,
+  easeOut,
+  getFadeUp,
+  getStagger,
+  usePrefersReducedMotion,
+} from "@/lib/motion";
 import SectionHeader from "./SectionHeader";
-import FadeUp from "./FadeUp";
-
-// ─── Types ─────────────────────────────────────────────────────────────────────
-
-interface TiltState {
-  rotateX: number;
-  rotateY: number;
-  glareX: number; // 0–100 %, used for the specular glare
-  glareY: number;
-  isHovered: boolean;
-}
-
-const TILT_AMOUNT = 10;   // max degrees of rotation
-const GLARE_OPACITY = 0.07; // very subtle specular highlight
-
-// ─── TiltCard ──────────────────────────────────────────────────────────────────
 
 interface Project {
   title: string;
   description: string;
   stack: string[];
   color: string;
-  icon: string;
   image?: string;
   live: string;
   github?: string;
 }
 
-function TiltCard({ project, delay }: { project: Project; delay: number }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+function ProjectCard({ project }: { project: Project }) {
   const prefersReducedMotion = usePrefersReducedMotion();
-
-  const [tilt, setTilt] = useState<TiltState>({
-    rotateX: 0,
-    rotateY: 0,
-    glareX: 50,
-    glareY: 50,
-    isHovered: false,
-  });
-
-  // Compute tilt angles from raw mouse position.
-  // Normalise to [-0.5, 0.5] relative to card centre.
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (prefersReducedMotion) return;
-
-    const card = cardRef.current;
-    if (!card) return;
-
-    const rect = card.getBoundingClientRect();
-    const nx = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 → 0.5
-    const ny = (e.clientY - rect.top) / rect.height - 0.5;
-
-    setTilt({
-      rotateX: -ny * TILT_AMOUNT,           // tilt up/down
-      rotateY: nx * TILT_AMOUNT,           // tilt left/right
-      glareX: (nx + 0.5) * 100,           // 0–100%
-      glareY: (ny + 0.5) * 100,
-      isHovered: true,
-    });
-  }, [prefersReducedMotion]);
-
-  const handleMouseLeave = useCallback(() => {
-    setTilt({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50, isHovered: false });
-  }, []);
-
-  useEffect(() => {
-    if (!isPreviewOpen) return;
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsPreviewOpen(false);
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isPreviewOpen]);
-
   const hasLive = Boolean(project.live) && project.live !== "#";
   const hasGithub = Boolean(project.github) && project.github !== "#";
+  const item = getFadeUp(prefersReducedMotion);
 
   return (
-    <FadeUp delay={delay}>
-      {/*
-        Outer wrapper: perspective container.
-        The `transition` on transform gives the "spring-back" ease
-        when the mouse moves *within* the card (quick) and on leave (slower).
-      */}
-      <div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        style={{
-          perspective: prefersReducedMotion ? undefined : "900px",
-          /* GPU-hint so the browser composites on its own layer */
-          willChange: prefersReducedMotion ? undefined : "transform",
-        }}
-        className="h-full"
-      >
+    <motion.article
+      variants={item}
+      whileHover={
+        prefersReducedMotion
+          ? undefined
+          : { y: -4, transition: { duration: duration.fast, ease: easeOut } }
+      }
+      className="bg-surface border border-border overflow-hidden flex flex-col h-full group hover:border-border2 hover:shadow-lift transition-[border-color,box-shadow] duration-300"
+    >
+      <div className="relative h-48 sm:h-52 bg-bg2 overflow-hidden border-b border-border">
         <div
+          aria-hidden
+          className="absolute inset-0 opacity-[0.12]"
           style={{
-            transform: prefersReducedMotion
-              ? undefined
-              : `
-              rotateX(${tilt.rotateX}deg)
-              rotateY(${tilt.rotateY}deg)
-              translateZ(0)
-            `,
-            transition: prefersReducedMotion
-              ? undefined
-              : tilt.isHovered
-              ? "transform 0.08s linear"      // snappy while moving
-              : "transform 0.55s cubic-bezier(0.21,0.47,0.32,0.98)", // smooth spring-back
-            transformStyle: prefersReducedMotion ? undefined : "preserve-3d",
+            background: `radial-gradient(circle at 30% 40%, ${project.color}, transparent 65%)`,
           }}
-          className="bg-surface border border-border rounded-md overflow-hidden flex flex-col group hover:border-border2 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-[border-color,box-shadow] duration-300 h-full relative"
-        >
-          {/* ── Specular glare overlay — translates in 3D space ── */}
-          {!prefersReducedMotion && (
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 rounded-md z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-              style={{
-                background: `radial-gradient(
-                circle 280px at ${tilt.glareX}% ${tilt.glareY}%,
-                rgba(255,255,255,${GLARE_OPACITY}) 0%,
-                transparent 70%
-              )`,
-              }}
-            />
-          )}
-
-          {/* ── Thumbnail ────────────────────────────────────────── */}
-          <div className="h-48 bg-bg relative overflow-hidden border-b border-border flex items-center justify-center">
-            <div
-              className="absolute inset-0 opacity-5"
-              style={{ background: `radial-gradient(circle at 30% 50%, ${project.color}, transparent 70%)` }}
-            />
-            {project.image ? (
-              <button
-                type="button"
-                onClick={() => setIsPreviewOpen(true)}
-                className="absolute inset-0 cursor-zoom-in bg-black/40"
-                aria-label={`View larger preview of ${project.title}`}
-              >
-                <Image
-                  src={project.image}
-                  alt={`${project.title} preview`}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-contain object-center transition-transform duration-500 group-hover:scale-105"
-                />
-              </button>
-            ) : (
-              <span className="text-5xl opacity-30">{project.icon}</span>
-            )}
+        />
+        {project.image ? (
+          <Image
+            src={project.image}
+            alt={`${project.title} preview`}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="font-display font-extrabold text-5xl text-ink/10 tracking-tight">
+              {project.title.slice(0, 2)}
+            </span>
           </div>
-
-          {/* ── Body ─────────────────────────────────────────────── */}
-          <div className="p-7 flex flex-col flex-1">
-            <h3 className="font-display font-bold text-xl tracking-tight mb-3 group-hover:text-green transition-colors">
-              {project.title}
-            </h3>
-            <p className="text-text-muted text-sm leading-relaxed font-light flex-1 mb-5">
-              {project.description}
-            </p>
-
-            {/* Tech stack */}
-            {project.stack.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mb-6">
-                {project.stack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="font-mono text-[0.68rem] text-text-faint bg-bg border border-border px-2.5 py-1 rounded tracking-[0.03em]"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            {/* Links */}
-            <div className="flex gap-3 mt-auto">
-              {hasLive && (
-                <a
-                  href={project.live}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 font-mono text-xs text-text-muted border border-border px-4 py-2 rounded hover:border-green hover:text-green transition-all tracking-[0.04em]"
-                >
-                  Open Live App
-                </a>
-              )}
-              {hasGithub && (
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 font-mono text-xs text-text-muted border border-border px-4 py-2 rounded hover:border-green hover:text-green transition-all tracking-[0.04em]"
-                >
-                  GitHub
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
+        )}
       </div>
 
-      {project.image && isPreviewOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-5"
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${project.title} preview`}
-          onClick={() => setIsPreviewOpen(false)}
-        >
-          <div className="relative h-[min(88vh,800px)] w-[min(94vw,1200px)]">
-            <Image
-              src={project.image}
-              alt={`${project.title} full preview`}
-              fill
-              sizes="94vw"
-              className="object-contain"
-            />
-            <button
-              type="button"
-              onClick={() => setIsPreviewOpen(false)}
-              className="absolute right-0 top-0 rounded border border-white/30 bg-black/70 px-3 py-1.5 font-mono text-xs text-white hover:border-green hover:text-green"
-              aria-label="Close image preview"
-            >
-              Close
-            </button>
+      <div className="p-6 sm:p-7 flex flex-col flex-1">
+        <h3 className="font-display font-bold text-xl tracking-tight mb-3 group-hover:text-accent transition-colors">
+          {project.title}
+        </h3>
+        <p className="text-ink-muted text-sm leading-relaxed font-light flex-1 mb-5">
+          {project.description}
+        </p>
+
+        {project.stack.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-6">
+            {project.stack.map((tech) => (
+              <span
+                key={tech}
+                className="font-mono text-[0.68rem] text-ink-faint bg-bg2 border border-border px-2.5 py-1 tracking-[0.03em]"
+              >
+                {tech}
+              </span>
+            ))}
           </div>
+        )}
+
+        <div className="flex flex-wrap gap-3 mt-auto">
+          {hasLive && (
+            <motion.a
+              href={project.live}
+              target="_blank"
+              rel="noreferrer"
+              whileHover={prefersReducedMotion ? undefined : { y: -1 }}
+              whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+              className="inline-flex items-center font-mono text-xs text-white bg-accent px-4 py-2 hover:bg-accent-dark transition-colors tracking-[0.04em]"
+            >
+              Live
+            </motion.a>
+          )}
+          {hasGithub && (
+            <motion.a
+              href={project.github}
+              target="_blank"
+              rel="noreferrer"
+              whileHover={prefersReducedMotion ? undefined : { y: -1 }}
+              whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+              className="inline-flex items-center font-mono text-xs text-ink-muted border border-border px-4 py-2 hover:border-accent hover:text-accent transition-colors tracking-[0.04em]"
+            >
+              GitHub
+            </motion.a>
+          )}
         </div>
-      )}
-    </FadeUp>
+      </div>
+    </motion.article>
   );
 }
 
-// ─── Section ───────────────────────────────────────────────────────────────────
-
 export default function Projects() {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const container = getStagger(prefersReducedMotion);
+
   return (
-    <section id="projects" className="py-28 relative z-10">
+    <section id="projects" className="py-24 md:py-28 relative z-10">
       <div className="container mx-auto px-[5%]">
         <SectionHeader
           tag="03 — Projects"
-          title={<>Things I&apos;ve<br />shipped.</>}
+          title={
+            <>
+              Things I&apos;ve
+              <br />
+              shipped.
+            </>
+          }
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, i) => (
-            <TiltCard key={project.title} project={project} delay={i * 0.1} />
+        <motion.div
+          variants={container}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6"
+        >
+          {projects.map((project) => (
+            <ProjectCard key={project.title} project={project} />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

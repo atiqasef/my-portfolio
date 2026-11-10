@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Syne, Instrument_Sans, DM_Mono } from "next/font/google";
 import "./globals.css";
-import CursorSpotlight from "@/components/CursorSpotlight";
 import { SITE_URL, siteConfig } from "@/lib/data";
 
 const syne = Syne({
@@ -85,9 +84,8 @@ export default function RootLayout({
       lang="en"
       className={`scroll-smooth ${syne.variable} ${instrumentSans.variable} ${dmMono.variable}`}
     >
-      <body className="bg-bg text-text font-body antialiased overflow-x-hidden">
+      <body className="bg-bg text-ink font-body antialiased overflow-x-hidden">
         {children}
-        <CursorSpotlight />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 # Atiq Asef — Portfolio Website
 
-A modern, dark, minimal portfolio built with **Next.js 14**, **Tailwind CSS**, and **Framer Motion**. Configured as a **static export** for hosting on Vercel (or any static host).
+A modern, light studio portfolio built with **Next.js 14**, **Tailwind CSS**, and **Framer Motion**. Configured as a **static export** for hosting on Vercel (or any static host).
 
 ## Quick Start
 
@@ -47,11 +47,11 @@ my-portfolio/
 │   ├── Footer.tsx
 │   ├── FadeUp.tsx
 │   ├── SectionHeader.tsx
-│   ├── CursorSpotlight.tsx
+│   ├── Icons.tsx            # Inline SVG icons
 │   └── GridBackground.tsx
 ├── lib/
 │   ├── data.ts              # ALL site content lives here
-│   └── motion.ts            # prefers-reduced-motion helper
+│   └── motion.ts            # Shared motion variants + reduced-motion
 └── public/
     ├── profile/profile.jpg
     ├── Atiq-Asef-CV.pdf

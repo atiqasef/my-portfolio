@@ -1,19 +1,20 @@
-// components/Hero.tsx
 "use client";
 
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { siteConfig } from "@/lib/data";
-import { usePrefersReducedMotion } from "@/lib/motion";
-
-// ─── Typewriter ────────────────────────────────────────────────────────────────
+import {
+  getHeroContainer,
+  getHeroItem,
+  usePrefersReducedMotion,
+} from "@/lib/motion";
 
 const TITLES = ["Full Stack Developer", "React Specialist", "Next.js Expert"] as const;
-const TYPING_SPEED = 65;   // ms per char, typing
-const DELETING_SPEED = 32;   // ms per char, deleting
-const PAUSE_AFTER = 1800; // ms to hold the full word before deleting
-const PAUSE_BETWEEN = 380;  // ms empty pause before next word
+const TYPING_SPEED = 65;
+const DELETING_SPEED = 32;
+const PAUSE_AFTER = 1800;
+const PAUSE_BETWEEN = 380;
 
 type Phase = "typing" | "pausing" | "deleting" | "waiting";
 
@@ -64,190 +65,142 @@ function useTypewriter(words: readonly string[], enabled: boolean) {
   return displayed;
 }
 
-// ─── Fade helper ───────────────────────────────────────────────────────────────
-
-const fadeUp = (delay = 0, reduced = false) =>
-  reduced
-    ? {
-        initial: false as const,
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0 },
-      }
-    : {
-        initial: { opacity: 0, y: 30 },
-        animate: { opacity: 1, y: 0 },
-        transition: { duration: 0.6, delay, ease: [0.21, 0.47, 0.32, 0.98] },
-      };
-
-// ─── Component ─────────────────────────────────────────────────────────────────
-
 export default function Hero() {
   const prefersReducedMotion = usePrefersReducedMotion();
   const typewriterText = useTypewriter(TITLES, !prefersReducedMotion);
+  const container = getHeroContainer(prefersReducedMotion);
+  const item = getHeroItem(prefersReducedMotion);
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center pt-16 overflow-hidden"
+      className="relative min-h-screen flex items-stretch pt-16 overflow-hidden"
     >
-      <div className="container mx-auto px-[5%] w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center py-20">
+      {/* Full-bleed atmospheric gradient */}
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10"
+        style={{
+          background: `
+            radial-gradient(ellipse 70% 55% at 78% 18%, rgba(47,91,255,0.10) 0%, transparent 55%),
+            radial-gradient(ellipse 50% 40% at 8% 78%, rgba(47,91,255,0.05) 0%, transparent 50%),
+            linear-gradient(165deg, #F5F7FA 0%, #EEF1F6 48%, #E8ECF4 100%)
+          `,
+        }}
+      />
 
-          {/* ── Left Content ─────────────────────────────────────── */}
-          <div>
-            {/* Available tag */}
-            <motion.div {...fadeUp(0.1, prefersReducedMotion)} className="mb-7">
-              <span className="inline-flex items-center gap-2 font-mono text-xs text-green border border-green/20 bg-green/8 px-4 py-2 rounded-sm tracking-[0.08em]">
-                <span className={`w-1.5 h-1.5 rounded-full bg-green ${prefersReducedMotion ? "" : "animate-pulse2"}`} />
-                Available for Freelance Work
-              </span>
-            </motion.div>
-
-            {/* Name — with animated gradient glow behind it */}
-            <motion.div {...fadeUp(0.2, prefersReducedMotion)} className="relative mb-4">
-              {/*
-                Glow layer — sits behind the text, breathes in & out.
-                We use two layered radial gradients:
-                  • Tight hot-spot (green) that pulses scale + opacity
-                  • Wider ambient halo that oscillates gently
-              */}
-              {prefersReducedMotion ? (
-                <span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 -z-10 rounded-xl"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse 72% 60% at 18% 55%, rgba(0,255,136,0.18) 0%, transparent 70%)",
-                    filter: "blur(28px)",
-                    opacity: 0.8,
-                  }}
-                />
-              ) : (
-                <motion.span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 -z-10 rounded-xl"
-                  style={{
-                    background:
-                      "radial-gradient(ellipse 72% 60% at 18% 55%, rgba(0,255,136,0.18) 0%, transparent 70%)",
-                    filter: "blur(28px)",
-                  }}
-                  animate={{
-                    opacity: [0.6, 1, 0.6],
-                    scale: [0.95, 1.04, 0.95],
-                    background: [
-                      "radial-gradient(ellipse 72% 60% at 18% 55%, rgba(0,255,136,0.18) 0%, transparent 70%)",
-                      "radial-gradient(ellipse 85% 70% at 22% 52%, rgba(0,255,136,0.26) 0%, transparent 68%)",
-                      "radial-gradient(ellipse 72% 60% at 18% 55%, rgba(0,255,136,0.18) 0%, transparent 70%)",
-                    ],
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                />
-              )}
-
-              <h1 className="font-display font-extrabold text-[clamp(2.8rem,6vw,5rem)] leading-[1.05] tracking-tight">
-                Atiq
-                <br />
-                <span className="text-green">Asef.</span>
-              </h1>
-            </motion.div>
-
-            {/* Typewriter title */}
-            <motion.p
-              {...fadeUp(0.3, prefersReducedMotion)}
-              className="font-mono text-base text-text-muted mb-6 tracking-[0.04em] h-6 flex items-center gap-0"
-            >
-              <span className="text-text-faint mr-2">&#47;&#47;</span>
-              <span>{typewriterText}</span>
-              {/* blinking cursor */}
-              {prefersReducedMotion ? (
-                <span className="ml-[2px] inline-block w-[2px] h-[1em] bg-green rounded-sm align-middle" />
-              ) : (
-                <motion.span
-                  className="ml-[2px] inline-block w-[2px] h-[1em] bg-green rounded-sm align-middle"
-                  animate={{ opacity: [1, 0, 1] }}
-                  transition={{ duration: 0.85, repeat: Infinity, ease: "steps(1)" }}
-                />
-              )}
-            </motion.p>
-
-            {/* Bio */}
-            <motion.p
-              {...fadeUp(0.4, prefersReducedMotion)}
-              className="text-text-muted text-[1.05rem] leading-relaxed mb-10 max-w-[440px] font-light"
-            >
-              {siteConfig.tagline} From concept to deployment — turning ideas
-              into digital products that actually work.
-            </motion.p>
-
-            {/* CTA Buttons */}
-            <motion.div {...fadeUp(0.5, prefersReducedMotion)} className="flex flex-wrap gap-3">
-              <a
-                href="#projects"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-green text-bg font-mono text-sm font-medium rounded hover:bg-green-dark transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(0,255,136,0.25)] tracking-[0.04em]"
-              >
-                View Projects →
-              </a>
-              <a
-                href={siteConfig.booking}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 border border-border2 text-text-muted font-mono text-sm rounded hover:border-green hover:text-green transition-all hover:-translate-y-0.5 tracking-[0.04em]"
-              >
-                Book a Call
-              </a>
-              <a
-                href={siteConfig.cv}
-                download
-                className="inline-flex items-center gap-2 px-6 py-3 border border-border2 text-text-muted font-mono text-sm rounded hover:border-green hover:text-green transition-all hover:-translate-y-0.5 tracking-[0.04em]"
-              >
-                ↓ Download CV
-              </a>
-            </motion.div>
-          </div>
-
-          {/* ── Right — Profile Image ──────────────────────────── */}
-          <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={
-              prefersReducedMotion
-                ? { duration: 0 }
-                : { duration: 0.8, delay: 0.2, ease: [0.21, 0.47, 0.32, 0.98] }
-            }
-            className="flex justify-center lg:justify-end"
+      <div className="w-full min-h-[calc(100vh-4rem)] grid grid-cols-1 lg:grid-cols-2 items-stretch">
+        {/* Copy */}
+        <motion.div
+          className="flex flex-col justify-center px-[5%] py-16 lg:py-20 lg:pr-10 xl:pr-16"
+          variants={container}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.p
+            variants={item}
+            className="font-mono text-xs text-accent tracking-[0.14em] mb-6"
           >
-            <div className="relative">
+            {siteConfig.location} · Freelance
+          </motion.p>
 
+          <motion.h1
+            variants={item}
+            className="font-display font-extrabold text-[clamp(3rem,7.5vw,5.25rem)] leading-[0.95] tracking-tight text-ink mb-6"
+          >
+            Atiq Asef
+          </motion.h1>
 
+          <motion.p
+            variants={item}
+            className="font-mono text-base text-ink-muted mb-5 tracking-[0.03em] min-h-[1.5rem] flex items-center"
+            aria-live="polite"
+          >
+            <span>{typewriterText || "\u00A0"}</span>
+            {prefersReducedMotion ? (
+              <span className="ml-[2px] inline-block w-[2px] h-[1em] bg-accent align-middle" />
+            ) : (
+              <motion.span
+                className="ml-[2px] inline-block w-[2px] h-[1em] bg-accent align-middle"
+                animate={{ opacity: [1, 0, 1] }}
+                transition={{ duration: 0.85, repeat: Infinity, ease: "steps(1)" }}
+              />
+            )}
+          </motion.p>
 
-              {/* Image frame */}
-              <div className="w-[280px] h-[280px] md:w-[340px] md:h-[340px] relative rounded-full overflow-hidden border-4 border-green shadow-[0_0_40px_rgba(0,255,136,0.3)]">
-                <div className="absolute inset-0 bg-gradient-to-br from-green/8 to-transparent z-10" />
-                <div>
-                  <Image
-                    src="/profile/profile.jpg"
-                    alt="Atiq Asef"
-                    fill
-                    className="object-cover object-top"
-                    priority
-                  />
-                </div>
-              </div>
+          <motion.p
+            variants={item}
+            className="text-ink-muted text-[1.05rem] leading-relaxed mb-10 max-w-[28rem] font-light"
+          >
+            {siteConfig.tagline}
+          </motion.p>
 
-              {/* Status badge */}
-              <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-surface border border-border2 px-4 py-2 rounded font-mono text-xs text-text-muted flex items-center gap-2">
-                <span className={`w-1.5 h-1.5 rounded-full bg-green ${prefersReducedMotion ? "" : "animate-pulse2"}`} />
-                Dhaka, Bangladesh · Open to work
-              </div>
-            </div>
+          <motion.div variants={item} className="flex flex-wrap items-center gap-3">
+            <motion.a
+              href="#projects"
+              whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+              whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+              className="inline-flex items-center px-6 py-3 bg-accent text-white font-mono text-sm font-medium rounded hover:bg-accent-dark transition-colors tracking-[0.04em]"
+            >
+              View Projects
+            </motion.a>
+            <motion.a
+              href="#contact"
+              whileHover={prefersReducedMotion ? undefined : { y: -2 }}
+              whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+              className="inline-flex items-center px-6 py-3 border border-border2 text-ink font-mono text-sm rounded hover:border-accent hover:text-accent transition-colors tracking-[0.04em]"
+            >
+              Contact me
+            </motion.a>
+            <a
+              href={siteConfig.cv}
+              download
+              className="inline-flex items-center ml-1 font-mono text-sm text-ink-faint hover:text-accent transition-colors tracking-[0.04em] underline underline-offset-4 decoration-border2 hover:decoration-accent"
+            >
+              Download CV
+            </a>
           </motion.div>
-        </div>
+        </motion.div>
+
+        {/* Dominant edge-to-edge portrait plane */}
+        <motion.div
+          className="relative min-h-[420px] sm:min-h-[520px] lg:min-h-full"
+          initial={prefersReducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={
+            prefersReducedMotion
+              ? { duration: 0 }
+              : { duration: 0.55, delay: 0.15, ease: [0.22, 1, 0.36, 1] }
+          }
+        >
+          <Image
+            src="/profile/hero-portrait.jpg"
+            alt="Atiq Asef"
+            fill
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover object-[center_20%]"
+            priority
+          />
+          <div
+            aria-hidden
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(245,247,250,0.78) 0%, rgba(245,247,250,0.2) 14%, transparent 34%), linear-gradient(180deg, transparent 80%, rgba(245,247,250,0.2) 100%)",
+            }}
+          />
+        </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
-        <span className="font-mono text-[0.65rem] text-text-faint tracking-[0.1em]">SCROLL</span>
-        <div className={`w-px h-10 bg-gradient-to-b from-text-faint to-transparent ${prefersReducedMotion ? "" : "animate-scrollLine"}`} />
+      <div className="absolute bottom-8 left-[5%] hidden lg:flex flex-col items-start gap-2 z-10">
+        <span className="font-mono text-[0.65rem] text-ink-faint tracking-[0.12em]">
+          SCROLL
+        </span>
+        <div
+          className={`w-px h-10 bg-gradient-to-b from-ink-faint to-transparent ${
+            prefersReducedMotion ? "" : "animate-scrollLine"
+          }`}
+        />
       </div>
     </section>
   );
