@@ -7,21 +7,36 @@ import { siteConfig } from "@/lib/data";
 import { duration, easeOut, usePrefersReducedMotion } from "@/lib/motion";
 
 const navLinks = [
-  { label: "About", href: "#about", id: "about" },
-  { label: "Skills", href: "#skills", id: "skills" },
   { label: "Projects", href: "#projects", id: "projects" },
   { label: "Services", href: "#services", id: "services" },
+  { label: "About", href: "#about", id: "about" },
+  { label: "Skills", href: "#skills", id: "skills" },
   { label: "Contact", href: "#contact", id: "contact" },
 ];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [overDark, setOverDark] = useState(true);
   const [active, setActive] = useState("hero");
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 24);
+
+      const hero = document.getElementById("hero");
+      const contact = document.getElementById("contact");
+      const probe = y + 56;
+      const inHero = hero
+        ? probe >= hero.offsetTop && probe < hero.offsetTop + hero.offsetHeight
+        : false;
+      const inContact = contact
+        ? probe >= contact.offsetTop
+        : false;
+      setOverDark(inHero || inContact);
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -58,6 +73,21 @@ export default function Navbar() {
     };
   }, [menuOpen]);
 
+  const brandColor = overDark
+    ? "text-ondark hover:text-accent-soft"
+    : "text-ink hover:text-accent-dark";
+  const linkIdle = overDark
+    ? "text-ondark-muted hover:text-ondark"
+    : "text-ink-muted hover:text-ink";
+  const linkActive = overDark ? "text-ondark" : "text-ink";
+  const lineColor = overDark ? "bg-ondark" : "bg-ink";
+
+  const barClass = scrolled
+    ? overDark
+      ? "bg-hero/85 backdrop-blur-xl border-b border-white/10"
+      : "bg-bg/85 backdrop-blur-xl border-b border-border"
+    : "bg-transparent border-b border-transparent";
+
   return (
     <>
       <motion.nav
@@ -68,15 +98,11 @@ export default function Navbar() {
             ? { duration: 0 }
             : { duration: duration.slow, ease: easeOut }
         }
-        className={`fixed top-0 left-0 right-0 z-50 h-16 px-[5%] flex items-center justify-between transition-[background-color,backdrop-filter,border-color] duration-300 ${
-          scrolled
-            ? "bg-bg/85 backdrop-blur-xl border-b border-border"
-            : "bg-transparent border-b border-transparent"
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 h-16 px-[5%] flex items-center justify-between transition-[background-color,backdrop-filter,border-color,color] duration-300 ${barClass}`}
       >
         <Link
           href="#hero"
-          className="font-display font-extrabold text-[1.05rem] tracking-tight text-ink hover:text-accent transition-colors"
+          className={`font-display font-medium text-[1.05rem] tracking-tight transition-colors ${brandColor}`}
         >
           Atiq Asef
         </Link>
@@ -89,12 +115,12 @@ export default function Navbar() {
                 <a
                   href={link.href}
                   className={`font-mono text-sm relative transition-colors ${
-                    isActive ? "text-ink" : "text-ink-muted hover:text-ink"
+                    isActive ? linkActive : linkIdle
                   }`}
                 >
                   {link.label}
                   <span
-                    className={`absolute -bottom-1 left-0 right-0 h-px bg-accent origin-left transition-transform duration-300 ${
+                    className={`absolute -bottom-1 left-0 right-0 h-px bg-accent-soft origin-left transition-transform duration-300 ${
                       isActive ? "scale-x-100" : "scale-x-0"
                     }`}
                   />
@@ -106,7 +132,11 @@ export default function Navbar() {
 
         <a
           href="#contact"
-          className="hidden md:inline-flex font-mono text-xs text-accent border border-accent/40 px-4 py-2 rounded hover:bg-accent hover:text-white transition-all tracking-[0.08em]"
+          className={`hidden md:inline-flex font-mono text-xs px-4 py-2 border transition-all tracking-[0.08em] ${
+            overDark
+              ? "text-ondark border-ondark/30 hover:bg-ondark hover:text-hero"
+              : "text-ink border-border2 hover:border-accent-dark hover:text-accent-dark"
+          }`}
         >
           Contact
         </a>
@@ -119,17 +149,17 @@ export default function Navbar() {
           aria-expanded={menuOpen}
         >
           <span
-            className={`w-5 h-px bg-ink transition-transform duration-300 ${
+            className={`w-5 h-px ${lineColor} transition-transform duration-300 ${
               menuOpen ? "rotate-45 translate-y-[6px]" : ""
             }`}
           />
           <span
-            className={`w-5 h-px bg-ink transition-opacity duration-300 ${
+            className={`w-5 h-px ${lineColor} transition-opacity duration-300 ${
               menuOpen ? "opacity-0" : ""
             }`}
           />
           <span
-            className={`w-5 h-px bg-ink transition-transform duration-300 ${
+            className={`w-5 h-px ${lineColor} transition-transform duration-300 ${
               menuOpen ? "-rotate-45 -translate-y-[6px]" : ""
             }`}
           />
@@ -143,7 +173,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: prefersReducedMotion ? 0 : duration.base }}
-            className="fixed inset-0 z-40 bg-bg flex flex-col items-center justify-center gap-8 md:hidden"
+            className="fixed inset-0 z-40 bg-hero flex flex-col items-center justify-center gap-8 md:hidden"
           >
             {navLinks.map((link, i) => (
               <motion.a
@@ -157,8 +187,10 @@ export default function Navbar() {
                     ? { duration: 0 }
                     : { delay: i * 0.06, duration: duration.base, ease: easeOut }
                 }
-                className={`font-display font-bold text-3xl transition-colors ${
-                  active === link.id ? "text-accent" : "text-ink-muted hover:text-accent"
+                className={`font-display font-light text-3xl transition-colors ${
+                  active === link.id
+                    ? "text-accent-soft"
+                    : "text-ondark-muted hover:text-ondark"
                 }`}
               >
                 {link.label}
@@ -168,7 +200,7 @@ export default function Navbar() {
               href={siteConfig.cv}
               download
               onClick={() => setMenuOpen(false)}
-              className="font-mono text-sm text-ink-muted mt-4 tracking-[0.06em]"
+              className="font-mono text-sm text-ondark-muted mt-4 tracking-[0.06em]"
             >
               Download CV
             </a>

@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
-import { Syne, Instrument_Sans, DM_Mono } from "next/font/google";
+import { Instrument_Sans, Instrument_Serif, DM_Mono } from "next/font/google";
 import "./globals.css";
 import { SITE_URL, siteConfig } from "@/lib/data";
-
-const syne = Syne({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-syne",
-  display: "swap",
-});
 
 const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-instrument",
+  display: "swap",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+  variable: "--font-instrument-serif",
   display: "swap",
 });
 
@@ -82,7 +83,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`scroll-smooth ${syne.variable} ${instrumentSans.variable} ${dmMono.variable}`}
+      className={`scroll-smooth ${instrumentSans.variable} ${instrumentSerif.variable} ${dmMono.variable}`}
     >
       <body className="bg-bg text-ink font-body antialiased overflow-x-hidden">
         {children}

@@ -17,12 +17,6 @@ export const siteConfig = {
     "My journey into tech is a little unconventional. I studied English Literature — which gave me a deep appreciation for storytelling, clarity, and communication. I carried those skills into coding, where I now tell stories through interfaces and systems.",
     "I specialize in the JavaScript ecosystem — React, Next.js, Node.js — and love working on projects that have real impact for real users.",
   ],
-  stats: [
-    { num: "2+", label: "Years Experience" },
-    { num: "20+", label: "Projects Delivered" },
-    { num: "15+", label: "Happy Clients" },
-    { num: "∞", label: "Cups of Coffee" },
-  ],
 };
 
 export const journey = [
@@ -48,26 +42,27 @@ export const journey = [
   },
 ];
 
-/** Skill icon keys map to inline SVGs in components/Icons.tsx */
-export const skills = {
-  current: [
-    { name: "HTML5", icon: "html" },
-    { name: "CSS3", icon: "css" },
-    { name: "JavaScript", icon: "js" },
-    { name: "React", icon: "react" },
-    { name: "Next.js", icon: "next" },
-    { name: "Node.js", icon: "node" },
-    { name: "MongoDB", icon: "mongo" },
-    { name: "Firebase", icon: "firebase" },
-    { name: "Tailwind CSS", icon: "tailwind" },
-    { name: "Payments", icon: "payments" },
-    { name: "Git / GitHub", icon: "git" },
-    { name: "TypeScript", icon: "ts" },
-    { name: "PostgreSQL", icon: "postgres" },
-    { name: "Docker", icon: "docker" },
-    { name: "AWS", icon: "aws" },
-  ],
-};
+/** Grouped skill lists — only confirmed tools. */
+export const skillGroups = [
+  {
+    label: "Frontend",
+    items: ["Next.js", "React", "TypeScript", "Tailwind CSS"],
+  },
+  {
+    label: "Backend",
+    items: ["Node.js", "Prisma", "MongoDB", "REST APIs"],
+  },
+  {
+    label: "Commerce & integrations",
+    items: [
+      "WordPress",
+      "WooCommerce",
+      "PHP",
+      "payment gateways",
+      "shipping APIs (DHL, UPS, USPS, Shippo)",
+    ],
+  },
+];
 
 export const projects = [
   {
@@ -75,18 +70,17 @@ export const projects = [
     description:
       "AI-powered invoicing SaaS. Generate professional invoices instantly, manage clients, track payments, and export PDFs — built for freelancers.",
     stack: ["Next.js", "TypeScript", "Prisma", "MongoDB", "Tailwind CSS"],
-    image: "/projects/billr-preview.gif",
+    image: "/projects/billr-preview.png",
     live: "https://billr-woad.vercel.app",
     github: "https://github.com/atiqasef/billr",
-    color: "#2F5BFF",
   },
   {
     title: "RentNest",
     description: "Property rental marketplace for browsing and listing rentals.",
-    // Stack read from rent-nest-client package.json + README (public repo).
     stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Stripe"],
+    image: "/projects/rentnest-preview.png",
     live: "https://rent-nest-client-flame.vercel.app",
-    color: "#0B6E4F",
+    // No public repo — hide GitHub in UI.
   },
   {
     title: "ClientHunts",
@@ -94,31 +88,26 @@ export const projects = [
       "Lead-discovery tool that finds potential clients using Google Places and web search.",
     // TODO: Add tech stack once confirmed (ClientHunts repo not publicly readable).
     stack: [] as string[],
+    image: "/projects/clienthunts-preview.png",
     live: "https://clienthunts.vercel.app",
-    github: "https://github.com/atiqasef/ClientHunts",
-    color: "#1A1F2C",
+    // Private repo — hide GitHub in UI.
   },
 ];
 
-/** Service icon keys map to inline SVGs in components/Icons.tsx */
 export const services = [
   {
-    icon: "fullstack",
     title: "Full Stack Development",
     desc: "End-to-end web application development — from frontend UI to backend APIs, databases, and deployment. Built with modern tech that scales.",
   },
   {
-    icon: "react",
     title: "React / Next.js Apps",
     desc: "Performant, SEO-optimized React and Next.js applications with server components, SSR, ISR, and clean architecture.",
   },
   {
-    icon: "api",
     title: "API & Backend Development",
     desc: "RESTful APIs using Node.js and Express. Secure authentication, database design, and third-party integrations.",
   },
   {
-    icon: "payments",
     title: "Payment Integration",
     desc: "Seamless payment gateway integration with Stripe, SSLCommerz, and other providers. Subscriptions, one-time payments, and refunds.",
   },
