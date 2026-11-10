@@ -3,6 +3,7 @@
 
 import { motion, Variants } from "framer-motion";
 import { skills } from "@/lib/data";
+import { usePrefersReducedMotion } from "@/lib/motion";
 import SectionHeader from "./SectionHeader";
 import FadeUp from "./FadeUp";
 
@@ -49,19 +50,25 @@ const chipVariants: Variants = {
 function SkillChip({
   name,
   icon,
+  reducedMotion,
 }: {
   name:      string;
   icon:      string;
+  reducedMotion: boolean;
 }) {
   return (
     <motion.div
-      variants={chipVariants}
-      whileHover={{
-        y:           -4,
-        scale:       1.05,
-        borderColor: "#00ff88",
-        transition:  { duration: 0.18 },
-      }}
+      variants={reducedMotion ? undefined : chipVariants}
+      whileHover={
+        reducedMotion
+          ? undefined
+          : {
+              y:           -4,
+              scale:       1.05,
+              borderColor: "#00ff88",
+              transition:  { duration: 0.18 },
+            }
+      }
       className="bg-surface border border-border rounded p-5 flex flex-col items-center gap-3 cursor-default relative text-center group transition-colors"
     >
       <span className="text-2xl leading-none">{icon}</span>
@@ -79,7 +86,21 @@ function SkillChip({
  * `whileInView` on the container fires once — individual chips cascade via
  * `staggerChildren` in `gridVariants`.
  */
-function AnimatedGrid({ children }: { children: React.ReactNode }) {
+function AnimatedGrid({
+  children,
+  reducedMotion,
+}: {
+  children: React.ReactNode;
+  reducedMotion: boolean;
+}) {
+  if (reducedMotion) {
+    return (
+      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+        {children}
+      </div>
+    );
+  }
+
   return (
     <motion.div
       variants={gridVariants}
@@ -95,6 +116,8 @@ function AnimatedGrid({ children }: { children: React.ReactNode }) {
 // ─── Section ───────────────────────────────────────────────────────────────────
 
 export default function Skills() {
+  const prefersReducedMotion = usePrefersReducedMotion();
+
   return (
     <section id="skills" className="py-28 bg-bg2 relative z-10">
       <div className="container mx-auto px-[5%]">
@@ -105,9 +128,13 @@ export default function Skills() {
 
         {/* Skills */}
         <FadeUp>
-          <AnimatedGrid>
+          <AnimatedGrid reducedMotion={prefersReducedMotion}>
             {skills.current.map((skill) => (
-              <SkillChip key={skill.name} {...skill} />
+              <SkillChip
+                key={skill.name}
+                {...skill}
+                reducedMotion={prefersReducedMotion}
+              />
             ))}
           </AnimatedGrid>
         </FadeUp>

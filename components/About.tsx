@@ -2,10 +2,13 @@
 
 import { motion } from "framer-motion";
 import { siteConfig, journey } from "@/lib/data";
+import { usePrefersReducedMotion } from "@/lib/motion";
 import SectionHeader from "./SectionHeader";
 import FadeUp from "./FadeUp";
 
 export default function About() {
+  const prefersReducedMotion = usePrefersReducedMotion();
+
   return (
     <section id="about" className="py-28 relative z-10">
       <div className="container mx-auto px-[5%]">
@@ -27,7 +30,6 @@ export default function About() {
                       __html: para
                         .replace("Atiq Asef", "<strong class='text-text font-medium'>Atiq Asef</strong>")
                         .replace("Dhaka, Bangladesh", "<span class='text-green'>Dhaka, Bangladesh</span>")
-                        .replace("RUSHD DEV", "<strong class='text-text font-medium'>RUSHD DEV</strong>")
                         .replace("English Literature", "<strong class='text-text font-medium'>English Literature</strong>")
                         .replace("JavaScript ecosystem", "<span class='text-green'>JavaScript ecosystem</span>"),
                     }}
@@ -61,7 +63,7 @@ export default function About() {
             {journey.map((item, i) => (
               <FadeUp key={i} delay={i * 0.1}>
                 <motion.div
-                  whileHover={{ x: 4 }}
+                  whileHover={prefersReducedMotion ? undefined : { x: 4 }}
                   transition={{ duration: 0.2 }}
                   className="bg-surface border border-border rounded p-7 relative overflow-hidden group"
                 >

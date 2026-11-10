@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform, useSpring } from "framer-motion";
 import Link from "next/link";
 import { siteConfig } from "@/lib/data";
+import { usePrefersReducedMotion } from "@/lib/motion";
 
 const navLinks = [
   { label: "About",    href: "#about"    },
@@ -16,6 +17,7 @@ const navLinks = [
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   /**
    * Raw scroll progress: 0 at top, saturates to 1 at 80px.
@@ -50,9 +52,13 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        initial={{ y: -80, opacity: 0 }}
+        initial={prefersReducedMotion ? false : { y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }}
+        transition={
+          prefersReducedMotion
+            ? { duration: 0 }
+            : { duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }
+        }
         className="fixed top-0 left-0 right-0 z-50 px-[5%] h-16 flex items-center justify-between"
       >
         {/*
@@ -94,7 +100,7 @@ export default function Navbar() {
 
         {/* ── Logo ──────────────────────────────────────────────── */}
         <Link href="#hero" className="flex items-center gap-2 group">
-          <span className="w-2 h-2 rounded-full bg-green animate-pulse2" />
+          <span className={`w-2 h-2 rounded-full bg-green ${prefersReducedMotion ? "" : "animate-pulse2"}`} />
           <span className="font-display font-extrabold text-[1.05rem] tracking-tight text-text group-hover:text-white transition-colors">
             Atiq<span className="text-green">.</span>
           </span>
@@ -151,9 +157,9 @@ export default function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                initial={{ opacity: 0, y: 20 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.07 }}
+                transition={prefersReducedMotion ? { duration: 0 } : { delay: i * 0.07 }}
                 className="font-display font-bold text-4xl text-text-muted hover:text-green transition-colors"
               >
                 {link.label}
@@ -163,9 +169,13 @@ export default function Navbar() {
               href={siteConfig.booking}
               target="_blank"
               rel="noreferrer"
-              initial={{ opacity: 0, y: 20 }}
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: navLinks.length * 0.07 }}
+              transition={
+                prefersReducedMotion
+                  ? { duration: 0 }
+                  : { delay: navLinks.length * 0.07 }
+              }
               className="font-mono text-green text-lg tracking-widest"
             >
               Book a Call →

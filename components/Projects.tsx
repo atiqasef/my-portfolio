@@ -2,9 +2,9 @@
 "use client";
 
 import { useRef, useState, useCallback, useEffect } from "react";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { projects } from "@/lib/data";
+import { usePrefersReducedMotion } from "@/lib/motion";
 import SectionHeader from "./SectionHeader";
 import FadeUp from "./FadeUp";
 
@@ -31,12 +31,13 @@ interface Project {
   icon: string;
   image?: string;
   live: string;
-  github: string;
+  github?: string;
 }
 
 function TiltCard({ project, delay }: { project: Project; delay: number }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const [tilt, setTilt] = useState<TiltState>({
     rotateX: 0,
@@ -49,6 +50,8 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
   // Compute tilt angles from raw mouse position.
   // Normalise to [-0.5, 0.5] relative to card centre.
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (prefersReducedMotion) return;
+
     const card = cardRef.current;
     if (!card) return;
 
@@ -63,7 +66,7 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
       glareY: (ny + 0.5) * 100,
       isHovered: true,
     });
-  }, []);
+  }, [prefersReducedMotion]);
 
   const handleMouseLeave = useCallback(() => {
     setTilt({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50, isHovered: false });
@@ -80,6 +83,9 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isPreviewOpen]);
 
+  const hasLive = Boolean(project.live) && project.live !== "#";
+  const hasGithub = Boolean(project.github) && project.github !== "#";
+
   return (
     <FadeUp delay={delay}>
       {/*
@@ -92,38 +98,44 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
-          perspective: "900px",
+          perspective: prefersReducedMotion ? undefined : "900px",
           /* GPU-hint so the browser composites on its own layer */
-          willChange: "transform",
+          willChange: prefersReducedMotion ? undefined : "transform",
         }}
         className="h-full"
       >
         <div
           style={{
-            transform: `
+            transform: prefersReducedMotion
+              ? undefined
+              : `
               rotateX(${tilt.rotateX}deg)
               rotateY(${tilt.rotateY}deg)
               translateZ(0)
             `,
-            transition: tilt.isHovered
+            transition: prefersReducedMotion
+              ? undefined
+              : tilt.isHovered
               ? "transform 0.08s linear"      // snappy while moving
               : "transform 0.55s cubic-bezier(0.21,0.47,0.32,0.98)", // smooth spring-back
-            transformStyle: "preserve-3d",
+            transformStyle: prefersReducedMotion ? undefined : "preserve-3d",
           }}
           className="bg-surface border border-border rounded-md overflow-hidden flex flex-col group hover:border-border2 hover:shadow-[0_20px_60px_rgba(0,0,0,0.5)] transition-[border-color,box-shadow] duration-300 h-full relative"
         >
           {/* ── Specular glare overlay — translates in 3D space ── */}
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 rounded-md z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-            style={{
-              background: `radial-gradient(
+          {!prefersReducedMotion && (
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 rounded-md z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              style={{
+                background: `radial-gradient(
                 circle 280px at ${tilt.glareX}% ${tilt.glareY}%,
                 rgba(255,255,255,${GLARE_OPACITY}) 0%,
                 transparent 70%
               )`,
-            }}
-          />
+              }}
+            />
+          )}
 
           {/* ── Thumbnail ────────────────────────────────────────── */}
           <div className="h-48 bg-bg relative overflow-hidden border-b border-border flex items-center justify-center">
@@ -147,12 +159,7 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
                 />
               </button>
             ) : (
-              <>
-                <span className="text-5xl opacity-30">{project.icon}</span>
-                <div className="absolute bottom-3 left-3 font-mono text-[0.68rem] text-text-faint bg-bg/80 px-2.5 py-1 rounded">
-                  Here I Need to add a screenshot → /public/projects/
-                </div>
-              </>
+              <span className="text-5xl opacity-30">{project.icon}</span>
             )}
           </div>
 
@@ -166,20 +173,22 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
             </p>
 
             {/* Tech stack */}
-            <div className="flex flex-wrap gap-1.5 mb-6">
-              {project.stack.map((tech) => (
-                <span
-                  key={tech}
-                  className="font-mono text-[0.68rem] text-text-faint bg-bg border border-border px-2.5 py-1 rounded tracking-[0.03em]"
-                >
-                  {tech}
-                </span>
-              ))}
-            </div>
+            {project.stack.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-6">
+                {project.stack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="font-mono text-[0.68rem] text-text-faint bg-bg border border-border px-2.5 py-1 rounded tracking-[0.03em]"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Links */}
             <div className="flex gap-3 mt-auto">
-              {project.live !== "#" ? (
+              {hasLive && (
                 <a
                   href={project.live}
                   target="_blank"
@@ -188,19 +197,17 @@ function TiltCard({ project, delay }: { project: Project; delay: number }) {
                 >
                   Open Live App
                 </a>
-              ) : (
-                <span className="inline-flex items-center gap-1.5 font-mono text-xs text-text-faint bg-surface border border-border px-4 py-2 rounded tracking-[0.04em] cursor-not-allowed">
-                  ⏳ Coming Soon
-                </span>
               )}
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 font-mono text-xs text-text-muted border border-border px-4 py-2 rounded hover:border-green hover:text-green transition-all tracking-[0.04em]"
-              >
-                GitHub
-              </a>
+              {hasGithub && (
+                <a
+                  href={project.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 font-mono text-xs text-text-muted border border-border px-4 py-2 rounded hover:border-green hover:text-green transition-all tracking-[0.04em]"
+                >
+                  GitHub
+                </a>
+              )}
             </div>
           </div>
         </div>

@@ -4,18 +4,15 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
-
 :root {
-  --font-syne:       'Syne', sans-serif;
-  --font-instrument: 'Instrument Sans', sans-serif;
-  --font-dm-mono:    'DM Mono', monospace;
-
   /*
    * Cursor spotlight — updated by CursorSpotlight.tsx via
    *   document.documentElement.style.setProperty('--cx', ...)
    * Defaults to the viewport centre so the glow is visible before
    * the first mousemove fires.
+   *
+   * Font CSS variables (--font-syne, --font-instrument, --font-dm-mono)
+   * are provided by next/font/google in app/layout.tsx.
    */
   --cx: 50vw;
   --cy: 50vh;
@@ -31,10 +28,25 @@ html {
   scroll-behavior: smooth;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
   background: #070707;
   color: #f0f0f0;
-  font-family: var(--font-instrument);
+  font-family: var(--font-instrument), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -90,6 +102,12 @@ body::after {
    * keeps the spotlight smooth even on lower-end devices.
    */
   will-change: background;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::after {
+    display: none;
+  }
 }
 
 /* ── Selection ───────────────────────────────────────────────────────────────── */

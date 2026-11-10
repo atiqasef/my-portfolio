@@ -45,7 +45,7 @@ export default function Footer() {
 
           {/* Copyright */}
           <div className="font-mono text-xs text-text-faint tracking-[0.05em]">
-            © {year} RUSHD DEV · Built with Next.js & ❤️
+            © {year} Atiq Asef · Built with Next.js & ❤️
           </div>
 
           {/* Socials */}
